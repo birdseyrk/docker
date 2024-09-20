@@ -1,0 +1,428 @@
+---
+# /usr/bin/ansible-playbook systemstatus.yaml -i inventory.yaml
+#- hosts: "{{group}}"
+- hosts: all
+  gather_facts: true
+  
+  vars:
+    debug: true
+    sendRequest: false
+    getMounts: false
+    excel: false
+    json: true
+    lastUpdate: "{{ansible_date_time.date}}:{{ansible_date_time.time}}"
+    myEpoch: "{{ansible_date_time.epoch}}"
+    myGroups: "{{group_names}}"
+    myHostname: "{{ansible_hostname}}"
+    myArchitecture: "{{ansible_architecture}}"
+    myDistribution: "{{ansible_distribution}}"
+    myVersion: "{{ansible_distribution_version}}"
+    myLSB: "{{ansible_lsb}}"
+    myDns: "{{ansible_dns}}"
+    myNodeName: "{{ansible_nodename}}"
+    myFreeMemory: "{{ansible_memfree_mb}}"
+    myMemory: "{{ansible_memory_mb}}"
+    myMounts: "{{ansible_mounts}}"
+    myDevices: "{{ansible_devices}}"
+    myProcessors: "{{ansible_processor}}"
+    #local: "none"
+
+  tasks:
+
+    - name: myHostName
+      ansible.builtin.debug:
+        var: myHostname
+      when: debug
+
+    - name: myDistribution
+      ansible.builtin.debug:
+        var: myDistribution
+      when: debug
+
+    - name: myVersion
+      ansible.builtin.debug:
+        var: myVersion
+      when: debug
+
+    - name: myGroups
+      ansible.builtin.debug:
+        var: myGroups
+      when: debug
+
+    - name: myMounts
+      ansible.builtin.debug:
+        var: myMounts
+      when: debug
+
+    - name: local
+      shell: ls -l /ops/local/ss | grep bin | cut -d '>' -f2 | cut -d '/' -f3
+      register: local
+      ignore_errors: yes
+      when: debug
+
+    - name: local not defined
+      ansible.builtin.set_fact:
+        myLocal: "{{local.stdout}}"
+      when: not local.stdout == ""
+      ignore_errors: yes
+
+    - name: local not defined
+      ansible.builtin.set_fact:
+        myLocal: "None"
+      when: local.stdout == ""
+      ignore_errors: yes
+
+    - name: print local
+      ansible.builtin.debug:
+        var: local
+      when: debug
+
+    - name: uptime
+      shell: cut -d ' ' -f1 /proc/uptime
+      register: uptime
+      ignore_errors: yes
+      when: debug
+
+    - name: print uptime
+      ansible.builtin.debug:
+        var: uptime
+      when: debug
+
+    - name: print memory
+      ansible.builtin.debug:
+        var: myMemory
+      when: debug
+
+    - name: print last update
+      ansible.builtin.debug:
+        var: lastUpdate
+      when: debug
+
+    - name: Nodemanager
+      #shell: ps -ef | grep SSCSPM_NodeManager | grep -wv grep | cut -d '/' -f6
+      shell: ps -ef | grep grafana | grep -wv grep | cut -d '/' -f6
+      register: nodemanager
+      ignore_errors: yes
+      when: debug
+
+    - name: print nodemanager
+      ansible.builtin.debug:
+        var: nodemanager.stdout_lines
+      when: debug
+
+    - name: Nodemanager not defined
+      ansible.builtin.set_fact:
+        myNodeManager: "No-NodeManager-running"
+      when: not nodemanager.stdout_lines
+      ignore_errors: yes
+
+    - name: Nodemanager defined
+      ansible.builtin.set_fact:
+        myNodeManager: "{{nodemanager.stdout_lines}}"
+      when: nodemanager.stdout_lines
+      ignore_errors: yes
+
+    - name: print myNodeManage
+      ansible.builtin.debug:
+        var: myNodeManager
+      when: debug
+
+    - name: SubAgent
+      #shell: ps -ef | grep SSCSSM_ProcessSubAgt | grep -wv grep | cut -d '/' -f6
+      shell: ps -ef | grep grafana | grep -wv grep | cut -d '/' -f6
+      register: subagent
+      ignore_errors: yes
+      when: debug
+
+    - name: print subagent
+      ansible.builtin.debug:
+        var: subagent.stdout_lines
+      when: debug
+
+    - name: SubAgent not defined
+      ansible.builtin.set_fact:
+        mySubagent: "No-SubAgent-running"
+      when: not subagent.stdout_lines
+      ignore_errors: yes
+
+    - name: SubAgent defined
+      ansible.builtin.set_fact:
+        mySubagent: "{{subagent.stdout_lines}}"
+      when: subagent.stdout_lines
+      ignore_errors: yes
+
+    - name: print mySubagent
+      ansible.builtin.debug:
+        var: mySubagent
+      when: debug
+
+    - name: print myMounts
+      ansible.builtin.debug:
+        var: myMounts
+      when: debug
+
+    - name: Ops Disk Information
+      ansible.builtin.set_fact:
+        opsdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - myHostname == "creede"
+        - item.mount == "/boot"
+      ignore_errors: yes
+
+    - name: Ops Disk Information
+      ansible.builtin.set_fact:
+        opsdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - not myHostname == "creede"
+        - item.mount == "/share/apps"
+      ignore_errors: yes
+
+    - name: set opsdisk if it does not exist
+      ansible.builtin.set_fact:
+        opsdisk:  {"size_total":1, "size_available":0 }
+      when: opsdisk is undefined
+
+    - name: print opsdisk
+      ansible.builtin.debug:
+        var: opsdisk
+      when: debug
+
+    - name: Ops Disk Used
+      ansible.builtin.set_fact:
+        opsused: "{{ ( opsdisk.size_total - opsdisk.size_available ) | int  }}"
+      when: opsdisk
+
+    - name: print Ops Disk Used
+      ansible.builtin.debug:
+        var: opsused
+      when: debug
+
+    - name: Ops Disk Percent Full
+      ansible.builtin.set_fact: 
+        opspercent: "{{ '{:0.2f}'.format(opsused |int / opsdisk.size_total  * 100)   }}"
+      when: opsdisk
+
+    - name: print Ops Disk Percent Full
+      ansible.builtin.debug:
+        var: opspercent
+      when: debug
+
+    - name: Log Disk Information
+      ansible.builtin.set_fact:
+        logdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - myHostname == "creede" 
+        - item.mount == "/boot"
+      ignore_errors: yes
+
+    - name: Log Disk Information
+      ansible.builtin.set_fact:
+        logdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - not myHostname == "creede"
+        - item.mount == "/share/log"
+      ignore_errors: yes
+
+    - name: set logdisk if it does not exist
+      ansible.builtin.set_fact:
+        logdisk:  {"size_total":1, "size_available":0 }
+      when: logdisk is undefined
+
+    - name: print logdisk
+      ansible.builtin.debug:
+        var: logdisk
+      when: debug
+
+    - name: Log Disk Used
+      ansible.builtin.set_fact:
+        logused: "{{ (( logdisk.size_total - logdisk.size_available ))  }}"
+      when: logdisk
+
+    - name: print Log Disk Used
+      ansible.builtin.debug:
+        var: logused
+      when: debug
+
+    - name: Log Disk Percent Full
+      ansible.builtin.set_fact: 
+        logpercent: "{{ '{:0.2f}'.format(logused |int / logdisk.size_total  * 100)   }}"
+      when: logdisk
+
+    - name: print Log Disk Percent Full
+      ansible.builtin.debug:
+        var: logpercent
+      when: debug
+
+    - name: Tmp Disk Information
+      ansible.builtin.set_fact:
+        tmpdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - myHostname == "creede" 
+        - item.mount == "/boot"
+      ignore_errors: yes
+
+    - name: Tmp Disk Information
+      ansible.builtin.set_fact:
+        tmpdisk: "{{item}}"
+      with_items: "{{myMounts}}"
+      when: 
+        - not myHostname == "creede"
+        - item.mount == "/share/data"
+      ignore_errors: yes
+
+    - name: set tmpdisk if it does not exist
+      ansible.builtin.set_fact:
+        tmpdisk:  {"size_total":1, "size_available":0 }
+      when: tmpdisk is undefined
+
+    - name: print tmpdisk
+      ansible.builtin.debug:
+        var: tmpdisk
+      when: debug
+
+    - name: Tmp Disk Used
+      ansible.builtin.set_fact:
+        tmpused: "{{ (( tmpdisk.size_total - tmpdisk.size_available ))  }}"
+      when: tmpdisk
+
+    - name: print Tmp Disk Used
+      ansible.builtin.debug:
+        var: tmpused
+      when: debug
+
+    - name: Tmp Disk Percent Full
+      ansible.builtin.set_fact: 
+        tmppercent: "{{ '{:0.2f}'.format(tmpused |int / tmpdisk.size_total  * 100)   }}"
+      when: tmpdisk
+
+    - name: print Tmp Disk Percent Full
+      ansible.builtin.debug:
+        var: tmppercent
+      when: debug
+
+
+    - name: checksumfiles
+      shell: ls -l /share/log/{{baseline}}/.cksums/.errs | grep {{inventory_hostname}} | cut -d ' ' -f9
+      register: checksumfiles
+      ignore_errors: yes
+
+    - name: print checksumfiles
+      ansible.builtin.debug:
+        var: checksumfiles.stdout_lines
+      when: debug
+
+    - name: checksum
+      shell: cat /share/log/{{baseline}}/.cksums/.errs/{{item}}
+      register: checksums
+      loop: "{{ checksumfiles.stdout_lines}}"
+      ignore_errors: yes
+
+    - name: print checksum results
+      ansible.builtin.debug:
+        var: checksums.results
+      when: debug
+
+    - name: set out of config
+      ansible.builtin.set_fact:
+        outofconfig: "Out-of-Config"
+      when: checksums.results
+      ignore_errors: yes
+
+    - name: set in config
+      ansible.builtin.set_fact:
+        outofconfig: "In-Config"
+      when: not checksums.results
+      ignore_errors: yes
+
+    - name: print outofconfig
+      ansible.builtin.debug:
+        var: outofconfig
+      when: debug
+
+    - name: Print Excel
+      ansible.builtin.debug:
+        msg:
+        #- "host group os version local status-date uptime memory-total memory-free memory-used sub-agent node-manager ops-total ops-avail ops-used ops-percent log-total log-avail log-used log-percent tmp-total tmp-avail tmp-used tmp-percent config"
+        - "{{inventory_hostname}} 
+        {{myGroups}} 
+        {{myDistribution}} 
+        {{ansible_facts.distribution_version}} 
+        {{myLocal}} 
+        {{lastUpdate}} 
+        {{uptime.stdout}} 
+        {{myMemory.real.total}} 
+        {{myMemory.real.free}} 
+        {{myMemory.real.used}} 
+        {{mySubagent}} 
+        {{myNodeManager}} 
+        {{opsdisk.size_total|filesizeformat(True)}} 
+        {{opsdisk.size_available|filesizeformat(True)}} 
+        {{opsused|filesizeformat(True)}} 
+        {{opspercent}}% 
+        {{logdisk.size_total|filesizeformat(True)}} 
+        {{logdisk.size_available|filesizeformat(True)}} 
+        {{ (logdisk.size_total - logdisk.size_available) |filesizeformat(True)}} 
+        {{logused|filesizeformat(True)}} 
+        {{logpercent}}% 
+        {{tmpdisk.size_total|filesizeformat(True)}} 
+        {{tmpdisk.size_available|filesizeformat(True)}} 
+        {{ (tmpdisk.size_total - tmpdisk.size_available) |filesizeformat(True)}} 
+        {{tmpused|filesizeformat(True)}} 
+        {{tmppercent}}% 
+        {{outofconfig}}
+        "
+
+
+    - name: set serverstatus
+      ansible.builtin.set_fact:
+        serverstatus: {
+        "hostname":"{{inventory_hostname}}", 
+        "os":"{{myDistribution}}", 
+        "osversion":"{{ansible_facts.distribution_version}}",
+        "groups":"{{myGroups}}", 
+        "local":"{{myLocal}}",
+        "uptime":"{{uptime.stdout}}",
+        "memory":"{{myMemory}}",
+        "lastUpdate":"{{lastUpdate}}",
+        "epoch":"{{myEpoch}}",
+        "subagent":"{{mySubagent}}",
+        "nodemanagers":"{{myNodeManager}}",
+        "checksum":"{{checksums.results}}",
+        "opstotal":"{{opsdisk.size_total|filesizeformat(True)}}",
+        "opsavail":"{{opsdisk.size_available|filesizeformat(True)}}",
+        "opsused":"{{opsused|filesizeformat(True)}} ",
+        "opspercent":"{{opspercent}}%",
+        
+        "logtotal":"{{logdisk.size_total|filesizeformat(True)}}",
+        "logavail":"{{logdisk.size_available|filesizeformat(True)}}",
+        "logused":"{{logused|filesizeformat(True)}}",
+        "logpercent":"{{logpercent}}%",
+        
+        "tmptotal":"{{tmpdisk.size_total|filesizeformat(True)}}",
+        "tmpavail":"{{tmpdisk.size_available|filesizeformat(True)}}",
+        "tmpused":"{{tmpused|filesizeformat(True)}}",
+        "tmppercent":"{{tmppercent}}%",
+        }
+      when: json
+
+    - name: print serverstatus
+      ansible.builtin.debug:
+        var: serverstatus
+      when: debug
+
+    - name: Post serverstatus
+      ansible.builtin.uri:
+        url: "http://nginx.ingress.192.168.1.100.nip.io:30850/newhoststatus"
+        method: POST
+        return_content: yes 
+        body_format: "json" 
+        body: "{{serverstatus}}"
+        status_code: 201
+      when:
+        - sendRequest
+        - json

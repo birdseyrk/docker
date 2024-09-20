@@ -1,0 +1,15 @@
+server:
+  hosts:
+    192.168.1.100:
+      vars:
+        env: eint
+  vars:
+    baseline: "rel30.0_dev"
+
+node:
+  hosts:
+    172.17.0.3:
+      vars:
+        env: etest
+  vars:
+    baseline: "rel30.0_dev"

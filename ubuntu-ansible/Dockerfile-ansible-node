@@ -1,0 +1,83 @@
+# https://docs.docker.com/build/building/best-practices/
+# docker build --no-cache -t ubuntu-node .
+# docker build --no-cache --add-host ubuntu-node:172.17.0.11 -t ubuntu-node . -f Dockerfile-ansible-node    <--- use this one
+
+# docker run -dt -h node1 --name ubuntu-node ubuntu-node
+
+# docker exec -it ubuntu-node  //bin//bash   windows
+
+# docker stop ubuntu-node
+# docker rm ubuntu-node
+# docker image rm ubuntu-node
+# docker stop ubuntu-node; docker rm ubuntu-node; docker image rm ubuntu-node
+
+
+# docker debug <id>
+# crontab -l
+# crontab -e
+# */30 * * * * /ops/ansible/hoststatus.sh
+#  */5 * * * * /ops/ansible/uptime.sh
+# * * * * * echo "Hello world" >> /var/log/cron.log 2>&1
+
+
+# replaced apt-get install -y openssh-client; with server\    
+
+FROM ubuntu:latest
+RUN apt-get -y update && apt-get install -y python3; \
+apt-get install -y openssh-server; \    
+apt-get install -y vim; \
+apt-get install -y cron; \
+apt-get install -y curl; \
+apt-get install -y gcc; \
+apt-get install -y iputils-ping; \
+apt-get install -y python3-pip
+
+RUN mkdir -p /ops
+WORKDIR /ops
+
+RUN groupadd -g 1001 ansadmin && \
+    useradd -m -u 1001 -g ansadmin ansadmin -p ansadmin
+RUN echo "ansadmin:ansadmin" | chpasswd
+
+COPY ssh_config /etc/ssh/ssh_config
+COPY ./cron/crontab /etc/cron.d/crontab
+RUN chmod 0644 /etc/cron.d/crontab
+RUN touch /var/log/cron.log
+RUN chmod 777 /var/log/cron.log
+
+RUN service ssh restart
+
+#USER ansadmin
+#USER root
+
+CMD ["cron", "-f", "tail -f /var/log/cron.log"]
+
+
+# RUN apt-get update -y; \
+# 	apt-get upgrade -y; \
+# 	apt-get install -y cron; \
+# 	apt-get install -y curl; \
+# 	apt-get install -y gcc python3; \
+
+# 	apt-get install -y python3-pip; \
+#     apt-get clean all
+
+
+
+# # https://stackoverflow.com/questions/74432427/how-to-install-python-libraries-in-docker-file-on-ubuntu
+# # docker build -t ubuntu-python .
+# # docker run --rm ubuntu-python
+# FROM ubuntu:latest
+
+# RUN apt update
+# RUN apt install python3 python3-pip -y
+# # RUN python3-pip -y
+
+# RUN mkdir -p /ops
+# WORKDIR /ops
+
+# COPY requirements.txt ./
+# RUN pip3 install -r requirements.txt
+
+# COPY script2.py ./
+# CMD ["python3", "./script2.py"]

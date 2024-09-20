@@ -1,0 +1,61 @@
+# https://docs.docker.com/build/building/best-practices/
+# docker build --no-cache -t ubuntu-ansible .
+# docker build --no-cache --add-host ansible-master:172.17.0.10 -t ubuntu-ansible .
+# docker build --no-cache --add-host ansible-master:172.17.0.10 -t ubuntu-ansible . -f Dockerfile-ansible-master   <--- use this one
+
+# docker run -dt -h ansible --name ubuntu-ansible ubuntu-ansible
+
+# docker exec -it ubuntu-ansible  //bin//bash   windows
+
+# docker stop ubuntu-ansible
+# docker rm ubuntu-ansible
+# docker image rm ubuntu-ansible
+# docker stop ubuntu-ansible; docker rm ubuntu-ansible; docker image rm ubuntu-ansible
+
+
+# docker debug <id>
+# crontab -l
+# crontab -e
+# 30 * * * * /ops/ansible/hoststatus.sh
+#  5 * * * * /ops/ansible/uptime.sh
+# * * * * * echo "Hello world" >> /var/log/cron.log 2>&1
+
+FROM ubuntu:latest
+RUN apt-get -y update && apt-get install -y python3; \
+apt-get install -y ansible; \
+apt-get install -y openssh-server; \
+apt-get install -y vim; \
+apt-get install -y cron; \
+apt-get install -y curl; \
+apt-get install -y gcc; \
+apt-get install -y iputils-ping; \
+apt-get install -y python3-pip
+
+RUN mkdir -p /ops
+WORKDIR /ops
+COPY ./ansible /ops/ansible
+RUN chmod 777 /ops/ansible
+RUN chmod 777 /ops/ansible/*.*
+
+RUN groupadd -g 1001 ansadmin && \
+    useradd -m -u 1001 -g ansadmin ansadmin -p ansadmin
+RUN echo "ansadmin:ansadmin" | chpasswd
+
+#COPY ./cron/crontab /etc/crontab
+COPY ./cron/crontab /etc/cron.d/crontab
+COPY ./ssh_config /etc/ssh/ssh_config
+COPY ./ansible.cfg /home/ansadmin/ansible.cfg
+RUN chown ansadmin:ansadmin /home/ansadmin/ansible.cfg
+RUN chmod 0644 /etc/cron.d/crontab
+RUN touch /var/log/cron.log
+RUN touch /var/log/ansible.log
+RUN chmod 777 /var/log/cron.log
+RUN chmod 777 /var/log/ansible.log
+
+#RUN service ssh restart  # did not work
+RUN systemctl restart ssh
+
+#USER ansadmin
+
+#USER root
+CMD ["cron", "-f", "tail -f /var/log/cron.log"]

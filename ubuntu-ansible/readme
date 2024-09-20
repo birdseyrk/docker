@@ -1,0 +1,107 @@
+ansible-master 
+1.  docker build --no-cache --add-host ansible-master:172.17.0.10 -t ubuntu-ansible . -f Dockerfile-ansible-master
+2.  docker run -dt -h ansible --name ubuntu-ansible ubuntu-ansible
+3.  docker exec -it ubuntu-ansible  //bin//bash
+# 6.  passwd ansadmin
+# 6.1 vi /etc/ssh/ssh_config
+#     uncomment out PasswordAuthentication yes
+#     service ssh restart
+6.2 vi /etc/hosts
+192.168.1.100 creede
+192.168.1.101 ubuntu1
+192.168.1.102 ubuntu2
+192.168.1.103 ubuntu3
+192.168.1.104 creede02
+192.168.1.105 creede03
+
+172.17.0.2 ansible
+172.17.0.3 node1
+172.17.0.4 node2
+172.17.0.5 node3
+172.17.0.6 node4
+172.17.0.7 node5
+172.17.0.8 node6
+172.17.0.9 node7
+172.17.0.10 node8
+172.17.0.11 node9
+172.17.0.12 node10
+
+7.  su - ansadmin
+8.  bash
+14. vi /ops/ansible/inventory.txt
+    add ip addresses
+14.1    vi /etc/hosts
+15. ssh-keygen
+16. copy ssh key
+    ssh-copy-id ansadmin@192.168.1.100	
+    ssh-copy-id ansadmin@192.168.1.101
+    ssh-copy-id ansadmin@192.168.1.102
+
+    ssh-copy-id ansadmin@192.168.1.103
+    ssh-copy-id ansadmin@192.168.1.104
+    ssh-copy-id ansadmin@192.168.1.105
+
+    ssh-copy-id ansadmin@172.17.0.2
+    ssh-copy-id ansadmin@172.17.0.3
+    ssh-copy-id ansadmin@172.17.0.4
+    ssh-copy-id ansadmin@172.17.0.5
+    ssh-copy-id ansadmin@172.17.0.6
+    ssh-copy-id ansadmin@172.17.0.7
+    ssh-copy-id ansadmin@172.17.0.8
+    ssh-copy-id ansadmin@172.17.0.9
+    ssh-copy-id ansadmin@172.17.0.10
+    ssh-copy-id ansadmin@172.17.0.11
+17. crontab -e      
+*/30 * * * * /ops/ansible/hoststatus.sh >> /var/log/ansible.log
+*/30 * * * * /ops/ansible/systemstatus.yaml >> /var/log/ansible.log
+*/5 * * * * /ops/ansible/uptime.sh >> /var/log/ansible.log
+* * * * * echo "Hello world" >> /var/log/cron.log 2>&1
+
+
+ansible-node Repeat for node1 - node10
+4.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
+5.  docker network inspect bridge
+9.  docker run -dt --name ubuntu-node ubuntu-node
+    repeat for all nodes
+5.  docker network inspect bridge
+10. docker exec -it ubuntu-node  //bin//bash 
+# 11. passwd ansadmin
+11.1    vi /etc/ssh/ssh_config
+        uncomment out PasswordAuthentication yes
+        service ssh restart
+12. su - ansadmin
+13. bash
+
+
+
+Get the IP address
+docker network inspect bridge
+
+
+
+https://medium.com/@andrewdass/make-your-own-dockerfile-to-run-an-ubuntu-container-015c58beb869
+https://hackmd.io/@the-ansible-book/B1y5tXers
+https://github.com/ansible-community/ansible-build-data/blob/main/10/CHANGELOG-v10.md
+
+docker build --no-cache -t ubuntu-ansible:latest .
+# docker run -d --name ubuntu-ansible ubuntu-ansible does not work
+docker run -dt --name ubuntu-ansible ubuntu-ansible /bin/bash -c "echo 'Hello World'; cat"
+docker exec -it ubuntu-ansible  /bin/bash
+docker ps -a
+docker kill <id>
+docker rm <id>
+
+docker debug <id>
+
+
+docker login
+docker push ansible:latest
+docker tag ansible sk12k/ansible
+docker image ls
+docker push sk12k/ansible
+
+
+debugging (this is cool)
+https://docs.docker.com/reference/cli/docker/debug/#:~:text=You%20don't%20need%20to,nano%20%2C%20htop%20%2C%20and%20curl%20.
+docker run --name my-app hello-world
+docker debug my-app
