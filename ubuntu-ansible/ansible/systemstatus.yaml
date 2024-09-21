@@ -93,6 +93,17 @@
         var: myMemory
       when: debug
 
+    # Get CPU Variables from the results
+    - name: CPU Variables
+      shell: cat /proc/cpuinfo
+      register: cpuinfo
+
+    # Print the cpuinfo
+    - name: Print the cpuinfo
+      ansible.builtin.debug:
+        var: cpuinfo.stdout_lines
+      when: debug
+
     - name: print last update
       ansible.builtin.debug:
         var: lastUpdate
@@ -305,21 +316,27 @@
         var: tmppercent
       when: debug
 
+    # TODO
+    # - name: checksumfiles
+    #   shell: ls -l /share/log/{{baseline}}/.cksums/.errs | grep {{inventory_hostname}} | cut -d ' ' -f9
+    #   register: checksumfiles
+    #   ignore_errors: yes
 
-    - name: checksumfiles
-      shell: ls -l /share/log/{{baseline}}/.cksums/.errs | grep {{inventory_hostname}} | cut -d ' ' -f9
-      register: checksumfiles
-      ignore_errors: yes
+    # - name: print checksumfiles
+    #   ansible.builtin.debug:
+    #     var: checksumfiles.stdout_lines
+    #   when: debug
 
-    - name: print checksumfiles
-      ansible.builtin.debug:
-        var: checksumfiles.stdout_lines
-      when: debug
+    # - name: checksum
+    #   shell: cat /share/log/{{baseline}}/.cksums/.errs/{{item}}
+    #   register: checksums
+    #   loop: "{{ checksumfiles.stdout_lines}}"
+    #   ignore_errors: yes
 
-    - name: checksum
-      shell: cat /share/log/{{baseline}}/.cksums/.errs/{{item}}
-      register: checksums
-      loop: "{{ checksumfiles.stdout_lines}}"
+    #TODO - Remove
+    - name: set in config
+      ansible.builtin.set_fact:
+        checksums.results: "checksums-TODO"
       ignore_errors: yes
 
     - name: print checksum results
@@ -327,16 +344,22 @@
         var: checksums.results
       when: debug
 
-    - name: set out of config
-      ansible.builtin.set_fact:
-        outofconfig: "Out-of-Config"
-      when: checksums.results
-      ignore_errors: yes
+    # - name: set out of config
+    #   ansible.builtin.set_fact:
+    #     outofconfig: "Out-of-Config"
+    #   when: checksums.results
+    #   ignore_errors: yes
 
+    # - name: set in config
+    #   ansible.builtin.set_fact:
+    #     outofconfig: "In-Config"
+    #   when: not checksums.results
+    #   ignore_errors: yes
+
+    #TODO - Remove
     - name: set in config
       ansible.builtin.set_fact:
-        outofconfig: "In-Config"
-      when: not checksums.results
+        outofconfig: "In-Config-TODO"
       ignore_errors: yes
 
     - name: print outofconfig
@@ -358,6 +381,7 @@
         {{myMemory.real.total}} 
         {{myMemory.real.free}} 
         {{myMemory.real.used}} 
+        {{cpuinfo.stdout_lines}} 
         {{mySubagent}} 
         {{myNodeManager}} 
         {{opsdisk.size_total|filesizeformat(True)}} 
@@ -388,11 +412,13 @@
         "local":"{{myLocal}}",
         "uptime":"{{uptime.stdout}}",
         "memory":"{{myMemory}}",
+        "cpuinfo":"{{cpuinfo.stdout_lines}}",
         "lastUpdate":"{{lastUpdate}}",
         "epoch":"{{myEpoch}}",
         "subagent":"{{mySubagent}}",
         "nodemanagers":"{{myNodeManager}}",
-        "checksum":"{{checksums.results}}",
+        "checksum":"TODO
+        ",
         "opstotal":"{{opsdisk.size_total|filesizeformat(True)}}",
         "opsavail":"{{opsdisk.size_available|filesizeformat(True)}}",
         "opsused":"{{opsused|filesizeformat(True)}} ",
@@ -406,7 +432,7 @@
         "tmptotal":"{{tmpdisk.size_total|filesizeformat(True)}}",
         "tmpavail":"{{tmpdisk.size_available|filesizeformat(True)}}",
         "tmpused":"{{tmpused|filesizeformat(True)}}",
-        "tmppercent":"{{tmppercent}}%",
+        "tmppercent":"{{tmppercent}}%"
         }
       when: json
 

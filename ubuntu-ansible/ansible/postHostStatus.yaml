@@ -83,7 +83,7 @@
 
   - name: Post Host Status
     ansible.builtin.uri:
-      url: "http://nginx.ingress.192.168.1.100.nip.io:30850/systemstatus"
+      url: "http://nginx.ingress.192.168.1.100.nip.io:30850/hoststatus"
       method: POST
       return_content: yes
       body_format: "json"
