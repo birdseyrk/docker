@@ -104,6 +104,17 @@
         var: cpuinfo.stdout_lines
       when: debug
 
+    # Get Process Information
+    - name: Process Information
+      shell: ps auxw | grep ansadmin
+      register: processinfo
+
+    # Print the processinfo
+    - name: Print the processinfo
+      ansible.builtin.debug:
+        var: processinfo.stdout_lines
+      when: debug
+
     - name: print last update
       ansible.builtin.debug:
         var: lastUpdate
@@ -372,67 +383,69 @@
         msg:
         #- "host group os version local status-date uptime memory-total memory-free memory-used sub-agent node-manager ops-total ops-avail ops-used ops-percent log-total log-avail log-used log-percent tmp-total tmp-avail tmp-used tmp-percent config"
         - "{{inventory_hostname}} 
-        {{myGroups}} 
-        {{myDistribution}} 
-        {{ansible_facts.distribution_version}} 
-        {{myLocal}} 
-        {{lastUpdate}} 
-        {{uptime.stdout}} 
-        {{myMemory.real.total}} 
-        {{myMemory.real.free}} 
-        {{myMemory.real.used}} 
-        {{cpuinfo.stdout_lines}} 
-        {{mySubagent}} 
-        {{myNodeManager}} 
-        {{opsdisk.size_total|filesizeformat(True)}} 
-        {{opsdisk.size_available|filesizeformat(True)}} 
-        {{opsused|filesizeformat(True)}} 
-        {{opspercent}}% 
-        {{logdisk.size_total|filesizeformat(True)}} 
-        {{logdisk.size_available|filesizeformat(True)}} 
-        {{ (logdisk.size_total - logdisk.size_available) |filesizeformat(True)}} 
-        {{logused|filesizeformat(True)}} 
-        {{logpercent}}% 
-        {{tmpdisk.size_total|filesizeformat(True)}} 
-        {{tmpdisk.size_available|filesizeformat(True)}} 
-        {{ (tmpdisk.size_total - tmpdisk.size_available) |filesizeformat(True)}} 
-        {{tmpused|filesizeformat(True)}} 
-        {{tmppercent}}% 
-        {{outofconfig}}
-        "
+          {{myGroups}} 
+          {{myDistribution}} 
+          {{ansible_facts.distribution_version}} 
+          {{myLocal}} 
+          {{lastUpdate}} 
+          {{uptime.stdout}} 
+          {{myMemory.real.total}} 
+          {{myMemory.real.free}} 
+          {{myMemory.real.used}} 
+          {{cpuinfo.stdout_lines}} 
+          {{processinfo.stdout_lines}} 
+          {{mySubagent}} 
+          {{myNodeManager}} 
+          {{opsdisk.size_total|filesizeformat(True)}} 
+          {{opsdisk.size_available|filesizeformat(True)}} 
+          {{opsused|filesizeformat(True)}} 
+          {{opspercent}}% 
+          {{logdisk.size_total|filesizeformat(True)}} 
+          {{logdisk.size_available|filesizeformat(True)}} 
+          {{ (logdisk.size_total - logdisk.size_available) |filesizeformat(True)}} 
+          {{logused|filesizeformat(True)}} 
+          {{logpercent}}% 
+          {{tmpdisk.size_total|filesizeformat(True)}} 
+          {{tmpdisk.size_available|filesizeformat(True)}} 
+          {{ (tmpdisk.size_total - tmpdisk.size_available) |filesizeformat(True)}} 
+          {{tmpused|filesizeformat(True)}} 
+          {{tmppercent}}% 
+          {{outofconfig}}
+          "
 
 
     - name: set serverstatus
       ansible.builtin.set_fact:
         serverstatus: {
-        "hostname":"{{inventory_hostname}}", 
-        "os":"{{myDistribution}}", 
-        "osversion":"{{ansible_facts.distribution_version}}",
-        "groups":"{{myGroups}}", 
-        "local":"{{myLocal}}",
-        "uptime":"{{uptime.stdout}}",
-        "memory":"{{myMemory}}",
-        "cpuinfo":"{{cpuinfo.stdout_lines}}",
-        "lastUpdate":"{{lastUpdate}}",
-        "epoch":"{{myEpoch}}",
-        "subagent":"{{mySubagent}}",
-        "nodemanagers":"{{myNodeManager}}",
-        "checksum":"TODO
-        ",
-        "opstotal":"{{opsdisk.size_total|filesizeformat(True)}}",
-        "opsavail":"{{opsdisk.size_available|filesizeformat(True)}}",
-        "opsused":"{{opsused|filesizeformat(True)}} ",
-        "opspercent":"{{opspercent}}%",
-        
-        "logtotal":"{{logdisk.size_total|filesizeformat(True)}}",
-        "logavail":"{{logdisk.size_available|filesizeformat(True)}}",
-        "logused":"{{logused|filesizeformat(True)}}",
-        "logpercent":"{{logpercent}}%",
-        
-        "tmptotal":"{{tmpdisk.size_total|filesizeformat(True)}}",
-        "tmpavail":"{{tmpdisk.size_available|filesizeformat(True)}}",
-        "tmpused":"{{tmpused|filesizeformat(True)}}",
-        "tmppercent":"{{tmppercent}}%"
+          "hostname":"{{inventory_hostname}}", 
+          "os":"{{myDistribution}}", 
+          "osversion":"{{ansible_facts.distribution_version}}",
+          "groups":"{{myGroups}}", 
+          "local":"{{myLocal}}",
+          "uptime":"{{uptime.stdout}}",
+          "memory":"{{myMemory}}",
+          "cpuinfo":"{{cpuinfo.stdout_lines}}",
+          "processinfo":"{{processinfo.stdout_lines}}",
+          "lastUpdate":"{{lastUpdate}}",
+          "epoch":"{{myEpoch}}",
+          "subagent":"{{mySubagent}}",
+          "nodemanagers":"{{myNodeManager}}",
+          "checksum":"TODO
+          ",
+          "opstotal":"{{opsdisk.size_total|filesizeformat(True)}}",
+          "opsavail":"{{opsdisk.size_available|filesizeformat(True)}}",
+          "opsused":"{{opsused|filesizeformat(True)}} ",
+          "opspercent":"{{opspercent}}%",
+          
+          "logtotal":"{{logdisk.size_total|filesizeformat(True)}}",
+          "logavail":"{{logdisk.size_available|filesizeformat(True)}}",
+          "logused":"{{logused|filesizeformat(True)}}",
+          "logpercent":"{{logpercent}}%",
+          
+          "tmptotal":"{{tmpdisk.size_total|filesizeformat(True)}}",
+          "tmpavail":"{{tmpdisk.size_available|filesizeformat(True)}}",
+          "tmpused":"{{tmpused|filesizeformat(True)}}",
+          "tmppercent":"{{tmppercent}}%"
         }
       when: json
 
@@ -443,7 +456,7 @@
 
     - name: Post serverstatus
       ansible.builtin.uri:
-        url: "http://nginx.ingress.192.168.1.100.nip.io:30850/newhoststatus"
+        url: "http://nginx.ingress.192.168.1.100.nip.io:30850/hoststatus"
         method: POST
         return_content: yes 
         body_format: "json" 
