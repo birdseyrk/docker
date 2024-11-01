@@ -4,9 +4,9 @@ cd /local/docker-ubuntu/docker/ubuntu-ansible
 
 
 ansible-master 
-1.  docker build --no-cache --add-host ansible-master:172.17.0.10 -t ubuntu-ansible . -f Dockerfile-ansible-master
-2.  docker run -dt -h ansible-master --name ubuntu-ansible ubuntu-ansible
-3.  docker exec -it ubuntu-ansible  //bin//bash
+1.  docker build --no-cache --add-host ansible-master -t ansible-master . -f Dockerfile-ansible-master
+2.  docker run -dt -h ansible-master --name ansible-master ansible-master
+3.  docker exec -it ansible-master  //bin//bash
 # 6.  passwd ansadmin
 # 6.1 vi /etc/ssh/ssh_config
 #     uncomment out PasswordAuthentication yes
@@ -31,13 +31,17 @@ ansible-master
 172.17.0.11 ubuntu-node09
 172.17.0.12 ubuntu-node10
 
+6.1 cd /var
+    chmod 777 log
+
 7.  su - ansadmin
 8.  bash
 14. vi /ops/ansible/inventory.txt
+    see CODE/docker/ansible/inventory file
     add ip addresses
-14.1    vi /etc/hosts
+# 14.1    vi /etc/hosts
 15. ssh-keygen
-16. copy ssh key
+16. copy ssh key  (need to set up hosts first and they have to be started)
     ssh-copy-id ansadmin@192.168.1.100	
     ssh-copy-id ansadmin@192.168.1.101
     ssh-copy-id ansadmin@192.168.1.102
@@ -46,7 +50,8 @@ ansible-master
     ssh-copy-id ansadmin@192.168.1.104
     ssh-copy-id ansadmin@192.168.1.105
 
-    ssh-copy-id ansadmin@172.17.0.2
+    #ssh-copy-id ansadmin@172.17.0.2
+    ssh-copy-id ansadmin@ubuntu-ansible
     ssh-copy-id ansadmin@ubuntu-node01
     ssh-copy-id ansadmin@ubuntu-node02
     ssh-copy-id ansadmin@ubuntu-node03
@@ -57,14 +62,14 @@ ansible-master
     ssh-copy-id ansadmin@ubuntu-node08
     ssh-copy-id ansadmin@ubuntu-node09
     ssh-copy-id ansadmin@ubuntu-node10
-17. crontab -e      
-*/30 * * * * /ops/ansible/hoststatus.sh >> /var/log/ansible.log
-*/30 * * * * /ops/ansible/systemstatus.yaml >> /var/log/ansible.log
-*/5 * * * * /ops/ansible/uptime.sh >> /var/log/ansible.log
-* * * * * echo "Hello world" >> /var/log/cron.log 2>&1
+17. crontab -e   
 
+MYDATE="date +%Y%m%d_%H:%M:%S"
+*/15 * * * * /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
+*/3 * * * * /ops/ansible/uptime.sh > /var/log/uptime.log
+* * * * * echo "ansadmin cron running date $($MYDATE)" > /var/log/cron.log 2>&1
 
-ansible-node Repeat for node1 - node10
+ansible-node Repeat for node01 - node10
 1.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
 # 5.  docker network inspect bridge
 2.  repeat for all nodes, replacing 01 with a one up number
@@ -78,6 +83,46 @@ ansible-node Repeat for node1 - node10
 Get the IP address
 docker network inspect bridge
 
+-------------------
+ docker stop ubuntu-node01
+ docker stop ubuntu-node02
+ docker stop ubuntu-node03
+ docker stop ubuntu-node04
+ docker stop ubuntu-node05
+ docker stop ubuntu-node06
+ docker stop ubuntu-node07
+ docker stop ubuntu-node08
+ docker stop ubuntu-node09
+ docker stop ubuntu-node10
+ docker stop ansible-master
+ docker ps -a
+
+
+ docker rm ubuntu-node01
+ docker rm ubuntu-node02
+ docker rm ubuntu-node03
+ docker rm ubuntu-node04
+ docker rm ubuntu-node05
+ docker rm ubuntu-node06
+ docker rm ubuntu-node07
+ docker rm ubuntu-node08
+ docker rm ubuntu-node09
+ docker rm ubuntu-node10
+ docker rm ansible-master
+ docker ps -a
+
+ docker image rm ubuntu-node
+ docker image rm ubuntu-node02
+ docker image rm ubuntu-node03
+ docker image rm ubuntu-node04
+ docker image rm ubuntu-node05
+ docker image rm ubuntu-node06
+ docker image rm ubuntu-node07
+ docker image rm ubuntu-node08
+ docker image rm ubuntu-node09
+ docker image rm ubuntu-node10
+ docker image rm ansible-master
+ docker ps -a
 
 
 https://medium.com/@andrewdass/make-your-own-dockerfile-to-run-an-ubuntu-container-015c58beb869
@@ -86,7 +131,8 @@ https://github.com/ansible-community/ansible-build-data/blob/main/10/CHANGELOG-v
 
 docker build --no-cache -t ubuntu-ansible:latest .
 # docker run -d --name ubuntu-ansible ubuntu-ansible does not work
-docker run -dt --name ubuntu-ansible ubuntu-ansible /bin/bash -c "echo 'Hello World'; cat"
+docker run -dt --name ubuntu-ansib
+le ubuntu-ansible /bin/bash -c "echo 'Hello World'; cat"
 docker exec -it ubuntu-ansible  /bin/bash
 docker ps -a
 docker kill <id>
