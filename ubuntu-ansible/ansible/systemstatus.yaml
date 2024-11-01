@@ -6,7 +6,7 @@
   
   vars:
     debug: true
-    sendRequest: false
+    sendRequest: true
     getMounts: false
     excel: false
     json: true
@@ -430,8 +430,7 @@
           "epoch":"{{myEpoch}}",
           "subagent":"{{mySubagent}}",
           "nodemanagers":"{{myNodeManager}}",
-          "checksum":"TODO
-          ",
+          "checksum":"TODO",
           "opstotal":"{{opsdisk.size_total|filesizeformat(True)}}",
           "opsavail":"{{opsdisk.size_available|filesizeformat(True)}}",
           "opsused":"{{opsused|filesizeformat(True)}} ",

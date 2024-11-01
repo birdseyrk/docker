@@ -18,14 +18,18 @@
 [cloud-servers]
 ansible-master
 
-[cloud-nodes]
+[cloud-nodes-1]
 ubuntu-node01
 ubuntu-node02
 ubuntu-node03
+
+[cloud-nodes-2]
 ubuntu-node04
 ubuntu-node05
 ubuntu-node06
 ubuntu-node07
+
+[cloud-nodes-3]
 ubuntu-node08
 ubuntu-node09
 ubuntu-node10

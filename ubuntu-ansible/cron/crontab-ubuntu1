@@ -22,6 +22,8 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 #
 # m h  dom mon dow   command
- */30 * * * * /local/docker/statusServices/cron/hoststatus.sh >> /share/log/serverstatus/serverstatus.log
- */5 * * * * /local/docker/statusServices/cron/uptime.sh >> /share/log/serverstatus/uptime.log
+MYDATE="date +%Y%m%d_%H:%M:%S"
+*/15 * * * * /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
+*/3 * * * * /ops/ansible/uptime.sh > /var/log/uptime.log
+* * * * * echo "ansadmin cron running date $($MYDATE)" > /var/log/cron.log 2>&1
 

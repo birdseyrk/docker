@@ -47,10 +47,9 @@ COPY ./ssh_config /etc/ssh/ssh_config
 COPY ./ansible.cfg /home/ansadmin/ansible.cfg
 RUN chown ansadmin:ansadmin /home/ansadmin/ansible.cfg
 RUN chmod 0644 /etc/cron.d/crontab
+RUN chmod 777 /var/log
 RUN touch /var/log/cron.log
-RUN touch /var/log/ansible.log
 RUN chmod 777 /var/log/cron.log
-RUN chmod 777 /var/log/ansible.log
 
 #RUN service ssh restart  # did not work
 #RUN systemctl restart ssh

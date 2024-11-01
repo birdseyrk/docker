@@ -3,9 +3,13 @@ su - ansadmin
 cd /local/docker-ubuntu/docker/ubuntu-ansible
 
 
+
+
 ansible-master 
-1.  docker build --no-cache --add-host ansible-master -t ansible-master . -f Dockerfile-ansible-master
+1.  docker build --no-cache --add-host ansible-master:172.17.0.2 -t ansible-master . -f Dockerfile-ansible-master
 2.  docker run -dt -h ansible-master --name ansible-master ansible-master
+3.  service ssh restart
+2.1 do Nodes below before proceeding
 3.  docker exec -it ansible-master  //bin//bash
 # 6.  passwd ansadmin
 # 6.1 vi /etc/ssh/ssh_config
@@ -19,7 +23,6 @@ ansible-master
 192.168.1.104 creede02
 192.168.1.105 creede03
 
-172.17.0.2  ansible-master
 172.17.0.3  ubuntu-node01
 172.17.0.4  ubuntu-node02
 172.17.0.5  ubuntu-node03
@@ -31,14 +34,11 @@ ansible-master
 172.17.0.11 ubuntu-node09
 172.17.0.12 ubuntu-node10
 
-6.1 cd /var
-    chmod 777 log
-
 7.  su - ansadmin
 8.  bash
-14. vi /ops/ansible/inventory.txt
-    see CODE/docker/ansible/inventory file
-    add ip addresses
+# 14. vi /ops/ansible/inventory.txt
+  #  see CODE/docker/ansible/inventory file
+  #  add ip addresses
 # 14.1    vi /etc/hosts
 15. ssh-keygen
 16. copy ssh key  (need to set up hosts first and they have to be started)
@@ -51,7 +51,7 @@ ansible-master
     ssh-copy-id ansadmin@192.168.1.105
 
     #ssh-copy-id ansadmin@172.17.0.2
-    ssh-copy-id ansadmin@ubuntu-ansible
+    ssh-copy-id ansadmin@ansible-master
     ssh-copy-id ansadmin@ubuntu-node01
     ssh-copy-id ansadmin@ubuntu-node02
     ssh-copy-id ansadmin@ubuntu-node03
@@ -69,13 +69,26 @@ MYDATE="date +%Y%m%d_%H:%M:%S"
 */3 * * * * /ops/ansible/uptime.sh > /var/log/uptime.log
 * * * * * echo "ansadmin cron running date $($MYDATE)" > /var/log/cron.log 2>&1
 
+Nodes:  (Step above)
+
 ansible-node Repeat for node01 - node10
 1.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
 # 5.  docker network inspect bridge
 2.  repeat for all nodes, replacing 01 with a one up number
     docker run -dt -h ubuntu-node01 --name ubuntu-node01 ubuntu-node
+    docker run -dt -h ubuntu-node02 --name ubuntu-node02 ubuntu-node
+    docker run -dt -h ubuntu-node03 --name ubuntu-node03 ubuntu-node
+    docker run -dt -h ubuntu-node04 --name ubuntu-node04 ubuntu-node
+    docker run -dt -h ubuntu-node05 --name ubuntu-node05 ubuntu-node
+    docker run -dt -h ubuntu-node06 --name ubuntu-node06 ubuntu-node
+    docker run -dt -h ubuntu-node07 --name ubuntu-node07 ubuntu-node
+    docker run -dt -h ubuntu-node08 --name ubuntu-node08 ubuntu-node
+    docker run -dt -h ubuntu-node09 --name ubuntu-node09 ubuntu-node
+    docker run -dt -h ubuntu-node10 --name ubuntu-node10 ubuntu-node
+    docker ps -a
+    docker network inspect bridge
 3.  docker network inspect bridge
-10. report for all the nodes, replacing 01 with a one up number
+4. report for all the nodes, replacing 01 with a one up number
     docker exec -it ubuntu-node01  //bin//bash 
     service ssh restart
 
