@@ -1,20 +1,75 @@
-ubuntu1
+ubuntu2
 su - ansadmin
 cd /local/docker-ubuntu/docker/ubuntu-ansible
 
+./delete-cloud.sh
+./install-cloud.sh
 
+
+archive
+
+
+
+**** Do Node first *****
+
+ansible-node Repeat for node01 - node10
+1.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
+# 5.  docker network inspect bridge
+2.  repeat for all nodes, replacing 01 with a one up number
+    docker run -dt -h ubuntu-node01 --restart=always --name ubuntu-node01 ubuntu-node
+    docker run -dt -h ubuntu-node02 --restart=always --name ubuntu-node02 ubuntu-node
+    docker run -dt -h ubuntu-node03 --restart=always --name ubuntu-node03 ubuntu-node
+    docker run -dt -h ubuntu-node04 --restart=always --name ubuntu-node04 ubuntu-node
+    docker run -dt -h ubuntu-node05 --restart=always --name ubuntu-node05 ubuntu-node
+    docker run -dt -h ubuntu-node06 --restart=always --name ubuntu-node06 ubuntu-node
+    docker run -dt -h ubuntu-node07 --restart=always --name ubuntu-node07 ubuntu-node
+    docker run -dt -h ubuntu-node08 --restart=always --name ubuntu-node08 ubuntu-node
+    docker run -dt -h ubuntu-node09 --restart=always --name ubuntu-node09 ubuntu-node
+    docker run -dt -h ubuntu-node10 --restart=always --name ubuntu-node10 ubuntu-node
+
+    docker exec -t ubuntu-node01 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node02 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node03 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node04 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node05 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node06 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node07 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node08 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node09 /bin/bash -c "/setup/setup-node.sh"
+    docker exec -t ubuntu-node10 /bin/bash -c "/setup/setup-node.sh"
+
+    docker ps -a
+    docker network inspect bridge
+3.  docker network inspect bridge
+4. report for all the nodes, replacing 01 with a one up number
+    #docker exec -it ubuntu-node01  //bin//bash 
+    docker exec -it ubuntu-node01  service ssh restart
+    docker exec -it ubuntu-node02  service ssh restart
+    docker exec -it ubuntu-node03  service ssh restart
+    docker exec -it ubuntu-node04  service ssh restart
+    docker exec -it ubuntu-node05  service ssh restart
+    docker exec -it ubuntu-node06  service ssh restart
+    docker exec -it ubuntu-node07  service ssh restart
+    docker exec -it ubuntu-node08  service ssh restart
+    docker exec -it ubuntu-node09  service ssh restart
+    docker exec -it ubuntu-node10  service ssh restart
 
 
 ansible-master 
-1.  docker build --no-cache --add-host ansible-master:172.17.0.2 -t ansible-master . -f Dockerfile-ansible-master
-2.  docker run -dt -h ansible-master --name ansible-master ansible-master
-3.  service ssh restart
-2.1 do Nodes below before proceeding
-3.  docker exec -it ansible-master  //bin//bash
+1.  docker build --no-cache --add-host ansible-master:172.17.0.12 -t ansible-master . -f Dockerfile-ansible-master
+2.  docker run -dt -h ansible-master --restart=always --name ansible-master ansible-master
+2.01  docker exec -t ansible-master /bin/bash -c "/setup/setup-master.sh"
+# 2.01  docker exec -it ansible-master  service ssh restart
+# 2.1.  docker exec -it ansible-master  //bin//bash
+# 2.2.  service ssh restart
+# 2.3   ^d
+3. do Nodes below before proceeding
+# 3.  docker exec -it ansible-master  //bin//bash
 # 6.  passwd ansadmin
 # 6.1 vi /etc/ssh/ssh_config
 #     uncomment out PasswordAuthentication yes
 #     service ssh restart
+# 4. docker exec -it ansible-master  //bin//bash
 6.2 vi /etc/hosts
 192.168.1.100 creede
 192.168.1.101 ubuntu1
@@ -23,16 +78,17 @@ ansible-master
 192.168.1.104 creede02
 192.168.1.105 creede03
 
-172.17.0.3  ubuntu-node01
-172.17.0.4  ubuntu-node02
-172.17.0.5  ubuntu-node03
-172.17.0.6  ubuntu-node04
-172.17.0.7  ubuntu-node05
-172.17.0.8  ubuntu-node06
-172.17.0.9  ubuntu-node07
-172.17.0.10 ubuntu-node08
-172.17.0.11 ubuntu-node09
-172.17.0.12 ubuntu-node10
+172.17.0.2  ubuntu-node01
+172.17.0.3  ubuntu-node02
+172.17.0.4  ubuntu-node03
+172.17.0.5  ubuntu-node04
+172.17.0.6  ubuntu-node05
+172.17.0.7  ubuntu-node06
+172.17.0.8  ubuntu-node07
+172.17.0.9  ubuntu-node08
+172.17.0.10 ubuntu-node09
+172.17.0.11 ubuntu-node10
+172.17.0.12 ansible-master
 
 7.  su - ansadmin
 8.  bash
@@ -42,13 +98,21 @@ ansible-master
 # 14.1    vi /etc/hosts
 15. ssh-keygen
 16. copy ssh key  (need to set up hosts first and they have to be started)
-    ssh-copy-id ansadmin@192.168.1.100	
-    ssh-copy-id ansadmin@192.168.1.101
-    ssh-copy-id ansadmin@192.168.1.102
+    # ssh-copy-id ansadmin@192.168.1.100	
+    # ssh-copy-id ansadmin@192.168.1.101
+    # ssh-copy-id ansadmin@192.168.1.102
 
-    ssh-copy-id ansadmin@192.168.1.103
-    ssh-copy-id ansadmin@192.168.1.104
-    ssh-copy-id ansadmin@192.168.1.105
+    # ssh-copy-id ansadmin@192.168.1.103
+    # ssh-copy-id ansadmin@192.168.1.104
+    # ssh-copy-id ansadmin@192.168.1.105
+
+    ssh-copy-id ansadmin@creede	
+    ssh-copy-id ansadmin@creede02
+    ssh-copy-id ansadmin@creede03
+
+    ssh-copy-id ansadmin@ubuntu1
+    ssh-copy-id ansadmin@ubuntu2
+    ssh-copy-id ansadmin@ubuntu2
 
     #ssh-copy-id ansadmin@172.17.0.2
     ssh-copy-id ansadmin@ansible-master
@@ -62,39 +126,18 @@ ansible-master
     ssh-copy-id ansadmin@ubuntu-node08
     ssh-copy-id ansadmin@ubuntu-node09
     ssh-copy-id ansadmin@ubuntu-node10
-17. crontab -e   
 
-MYDATE="date +%Y%m%d_%H:%M:%S"
-*/15 * * * * /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
-*/3 * * * * /ops/ansible/uptime.sh > /var/log/uptime.log
-* * * * * echo "ansadmin cron running date $($MYDATE)" > /var/log/cron.log 2>&1
+16.1 ssh to each host
+17. run the following manually once  Need to run the hostdtstud first
+    /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
+    /ops/ansible/uptime.sh > /var/log/uptime.log
+# 17.1 crontab -e  
 
-Nodes:  (Step above)
+# MYDATE="date +%Y%m%d_%H:%M:%S"
+# */15 * * * * /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
+# */3 * * * * /ops/ansible/uptime.sh > /var/log/uptime.log
+# * * * * * echo "ansadmin cron running date $($MYDATE)" > /var/log/cron.log 2>&1
 
-ansible-node Repeat for node01 - node10
-1.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
-# 5.  docker network inspect bridge
-2.  repeat for all nodes, replacing 01 with a one up number
-    docker run -dt -h ubuntu-node01 --name ubuntu-node01 ubuntu-node
-    docker run -dt -h ubuntu-node02 --name ubuntu-node02 ubuntu-node
-    docker run -dt -h ubuntu-node03 --name ubuntu-node03 ubuntu-node
-    docker run -dt -h ubuntu-node04 --name ubuntu-node04 ubuntu-node
-    docker run -dt -h ubuntu-node05 --name ubuntu-node05 ubuntu-node
-    docker run -dt -h ubuntu-node06 --name ubuntu-node06 ubuntu-node
-    docker run -dt -h ubuntu-node07 --name ubuntu-node07 ubuntu-node
-    docker run -dt -h ubuntu-node08 --name ubuntu-node08 ubuntu-node
-    docker run -dt -h ubuntu-node09 --name ubuntu-node09 ubuntu-node
-    docker run -dt -h ubuntu-node10 --name ubuntu-node10 ubuntu-node
-    docker ps -a
-    docker network inspect bridge
-3.  docker network inspect bridge
-4. report for all the nodes, replacing 01 with a one up number
-    docker exec -it ubuntu-node01  //bin//bash 
-    service ssh restart
-
-
-Get the IP address
-docker network inspect bridge
 
 -------------------
  docker stop ubuntu-node01
@@ -138,6 +181,22 @@ docker network inspect bridge
  docker ps -a
 
 
+ docker stop ansible-master
+ docker rm ansible-master
+ docker ps -a
+ docker image rm ansible-master
+ docker images
+
+ docker build --no-cache --add-host ansible-master:172.17.0.12 -t ansible-master . -f Dockerfile-ansible-master
+ docker run -dt -h ansible-master --restart=always --name ansible-master ansible-master
+ docker logs --tail 50 --follow --timestamps  ansible-master
+
+  docker exec -it ansible-master  //bin//bash
+
+  docker exec -t ansible-master /bin/bash -c "/setup/setup-master.sh"
+2.2.  service ssh restart
+
+
 https://medium.com/@andrewdass/make-your-own-dockerfile-to-run-an-ubuntu-container-015c58beb869
 https://hackmd.io/@the-ansible-book/B1y5tXers
 https://github.com/ansible-community/ansible-build-data/blob/main/10/CHANGELOG-v10.md
@@ -165,3 +224,38 @@ debugging (this is cool)
 https://docs.docker.com/reference/cli/docker/debug/#:~:text=You%20don't%20need%20to,nano%20%2C%20htop%20%2C%20and%20curl%20.
 docker run --name my-app hello-world
 docker debug my-app
+
+
+notes:
+total 4
+-rw------- 1 ansadmin crontab 1331 Dec  1 22:24 ansadmin
+root@ansible-master:/var/spool/cron/crontabs#
+
+
+archive
+
+ansible-node Repeat for node01 - node10
+1.  docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
+# 5.  docker network inspect bridge
+2.  repeat for all nodes, replacing 01 with a one up number
+    docker run -dt -h ubuntu-node01 --restart=always --name ubuntu-node01 ubuntu-node
+    docker run -dt -h ubuntu-node02 --restart=always --name ubuntu-node02 ubuntu-node
+    docker run -dt -h ubuntu-node03 --restart=always --name ubuntu-node03 ubuntu-node
+    docker run -dt -h ubuntu-node04 --restart=always --name ubuntu-node04 ubuntu-node
+    docker run -dt -h ubuntu-node05 --restart=always --name ubuntu-node05 ubuntu-node
+    docker run -dt -h ubuntu-node06 --restart=always --name ubuntu-node06 ubuntu-node
+    docker run -dt -h ubuntu-node07 --restart=always --name ubuntu-node07 ubuntu-node
+    docker run -dt -h ubuntu-node08 --restart=always --name ubuntu-node08 ubuntu-node
+    docker run -dt -h ubuntu-node09 --restart=always --name ubuntu-node09 ubuntu-node
+    docker run -dt -h ubuntu-node10 --restart=always --name ubuntu-node10 ubuntu-node
+    docker ps -a
+    docker network inspect bridge
+3.  docker network inspect bridge
+4. report for all the nodes, replacing 01 with a one up number
+    docker exec -it ubuntu-node01  //bin//bash 
+    service ssh restart
+
+
+Get the IP address
+docker network inspect bridge
+

@@ -24,6 +24,7 @@ FROM ubuntu:latest
 RUN apt-get -y update && apt-get install -y python3; \
 apt-get install -y ansible; \
 apt-get install -y openssh-server; \
+apt-get install -y sshpass; \
 apt-get install -y vim; \
 apt-get install -y cron; \
 apt-get install -y curl; \
@@ -32,6 +33,15 @@ apt-get install -y iputils-ping; \
 apt-get install -y python3-pip
 
 RUN mkdir -p /ops
+RUN mkdir -p /setup
+RUN chmod 777 /setup
+COPY ./hosts /setup/hosts
+COPY ./password.txt /setup/password.txt
+COPY ./setup-master.sh /setup/setup-master.sh
+RUN chmod 777 /setup/setup-master.sh
+COPY ./setup-ansadmin.sh /setup/setup-ansadmin.sh
+RUN chmod 777 /setup/setup-ansadmin.sh
+
 WORKDIR /ops
 COPY ./ansible /ops/ansible
 RUN chmod 777 /ops/ansible
@@ -43,10 +53,15 @@ RUN echo "ansadmin:ansadmin" | chpasswd
 
 #COPY ./cron/crontab /etc/crontab
 COPY ./cron/crontab /etc/cron.d/crontab
+#COPY /etc/hosts /etc/hosts.org
+COPY ./hosts /etc/hosts
+COPY ./cron/crontab /var/spool/cron/crontabs/ansadmin
 COPY ./ssh_config /etc/ssh/ssh_config
 COPY ./ansible.cfg /home/ansadmin/ansible.cfg
 RUN chown ansadmin:ansadmin /home/ansadmin/ansible.cfg
-RUN chmod 0644 /etc/cron.d/crontab
+#RUN chmod 0644 /etc/cron.d/crontab
+RUN chown ansadmin:crontab /var/spool/cron/crontabs/ansadmin
+RUN chmod 600 /var/spool/cron/crontabs/ansadmin
 RUN chmod 777 /var/log
 RUN touch /var/log/cron.log
 RUN chmod 777 /var/log/cron.log
@@ -57,4 +72,5 @@ RUN chmod 777 /var/log/cron.log
 #USER ansadmin
 
 #USER root
-CMD ["cron", "-f", "tail -f /var/log/cron.log"]
+#CMD ["/setup/setup-master.sh", "cron", "-f", "tail -f /var/log/cron.log"]
+CMD ["/bin/bash" "-c" "/setup/setup-master.sh", "cron", "-f", "tail -f /var/log/cron.log"]

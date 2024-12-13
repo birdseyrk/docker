@@ -25,6 +25,7 @@
 FROM ubuntu:latest
 RUN apt-get -y update && apt-get install -y python3; \
 apt-get install -y openssh-server; \    
+apt-get install -y sshpass; \
 apt-get install -y vim; \
 apt-get install -y cron; \
 apt-get install -y curl; \
@@ -33,6 +34,13 @@ apt-get install -y iputils-ping; \
 apt-get install -y python3-pip
 
 RUN mkdir -p /ops
+RUN mkdir -p /setup
+RUN chmod 777 /setup
+
+COPY ./password.txt /setup/password.txt
+COPY ./setup-node.sh /setup/setup-node.sh
+RUN chmod 777 /setup/setup-node.sh
+
 WORKDIR /ops
 
 RUN groupadd -g 1001 ansadmin && \

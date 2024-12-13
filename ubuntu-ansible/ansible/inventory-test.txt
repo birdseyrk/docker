@@ -1,0 +1,5 @@
+[cloud-nodes-1]
+ubuntu-node01
+
+[servers]
+creede
