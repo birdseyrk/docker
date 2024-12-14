@@ -72,5 +72,4 @@ RUN chmod 777 /var/log/cron.log
 #USER ansadmin
 
 #USER root
-#CMD ["/setup/setup-master.sh", "cron", "-f", "tail -f /var/log/cron.log"]
-CMD ["/bin/bash" "-c" "/setup/setup-master.sh", "cron", "-f", "tail -f /var/log/cron.log"]
+CMD ["cron", "-f", "tail -f /var/log/cron.log"]
