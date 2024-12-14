@@ -37,8 +37,8 @@ RUN mkdir -p /ops
 RUN mkdir -p /setup
 RUN chmod 777 /setup
 
-COPY ./password.txt /setup/password.txt
-COPY ./setup-node.sh /setup/setup-node.sh
+COPY ./setup/password.txt /setup/password.txt
+COPY ./setup/setup-node.sh /setup/setup-node.sh
 RUN chmod 777 /setup/setup-node.sh
 
 WORKDIR /ops
