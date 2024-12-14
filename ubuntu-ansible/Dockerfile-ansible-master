@@ -35,11 +35,11 @@ apt-get install -y python3-pip
 RUN mkdir -p /ops
 RUN mkdir -p /setup
 RUN chmod 777 /setup
-COPY ./setup/hosts /setup/hosts
-COPY ./setup/password.txt /setup/password.txt
-COPY ./setup/setup-master.sh /setup/setup-master.sh
+COPY ./hosts /setup/hosts
+COPY ./password.txt /setup/password.txt
+COPY ./setup-master.sh /setup/setup-master.sh
 RUN chmod 777 /setup/setup-master.sh
-COPY ./setup/setup-ansadmin.sh /setup/setup-ansadmin.sh
+COPY ./setup-ansadmin.sh /setup/setup-ansadmin.sh
 RUN chmod 777 /setup/setup-ansadmin.sh
 
 WORKDIR /ops
