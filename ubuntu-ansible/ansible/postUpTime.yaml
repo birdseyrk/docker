@@ -53,12 +53,19 @@
 # nodeport - "http://nginx.ingress.192.168.1.100.nip.io:30850/uptime"
   # ingress - "http://nginx.ingress.192.168.1.100.nip.io:8085/uptime"
 
-  - name: POST from contents of local file
-    ansible.builtin.uri:
-      url: "http://nginx.ingress.192.168.1.100.nip.io:30850/uptime"
-      method: POST
-      return_content: yes
-      body_format: "json"
-      body: "{{ serverstatus }}"
-      status_code: 201
-    when: sendRequest
+  - block:
+    - name: POST from contents of local file
+      ansible.builtin.uri:
+        url: "http://nginx.ingress.192.168.1.100.nip.io:30850/uptime"
+        method: POST
+        return_content: yes
+        body_format: "json"
+        body: "{{ serverstatus }}"
+        status_code: 201
+      when: sendRequest
+    rescue:
+      - name: Send service ssh restart
+        shell: service ssh restart
+        register: sshrestart
+
+      
