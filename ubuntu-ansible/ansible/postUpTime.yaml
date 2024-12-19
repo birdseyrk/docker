@@ -15,13 +15,36 @@
 
   tasks:
 
+  - name: This task will fail
+    command: /bin/false
+    ignore_unreachable: true
+    register: command_result
+
+  - name: This task will start only if host is unreachable
+    command: /bin/true
+    when: command_result.stdout is undefined
+
+
+  # Print the hostname
+  - name: Print The hostname command undefined
+    ansible.builtin.debug:
+      var: inventory_hostname
+    when: command_result.stdout is undefined
+
+  # Print the hostname
+  - name: Print The hostname when ansible-master
+    ansible.builtin.debug:
+      var: inventory_hostname
+    when: inventory_hostname == "ansible-master"
+
+
   # Cut the Uptime from the results
   - name: Check uptime prior reboot
     shell: cut -d ' ' -f1 /proc/uptime
     register: uptimeoutput
 
-  # Print the hostname
-  - name: Print The hostname
+  # Print the serverstatus
+  - name: Print The serverstatus
     ansible.builtin.debug:
       var: serverstatus
     when: debug
@@ -63,9 +86,18 @@
         body: "{{ serverstatus }}"
         status_code: 201
       when: sendRequest
+
     rescue:
+
+      # Print the hostname
+      - name: Print The hostname
+        ansible.builtin.debug:
+          var: inventory_hostname
+        #when: debug
+
       - name: Send service ssh restart
         shell: service ssh restart
         register: sshrestart
+ 
 
       
