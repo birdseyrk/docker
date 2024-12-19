@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  gather_facts: true
+  gather_facts: false
 
   # Register the Ansible Variables
   vars:
@@ -15,6 +15,49 @@
   # defines the Ansible tasks
 
   tasks:
+  
+
+  - name: Set register_master
+    ansible.builtin.set_fact:
+      register_master: true
+    ignore_unreachable: true
+    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+
+  - name: Set Master 
+    shell: /setup/setup-master.sh
+    register: set_master
+    ignore_unreachable: true
+    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+
+  - name: Set Node 
+    shell: /setup/setup-node.sh
+    register: set_node
+    ignore_unreachable: true
+    when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
+
+
+  # Print the register_master
+  - name: Print The register_master
+    ansible.builtin.debug:
+      var: register_master
+    ignore_unreachable: true
+    #when: debug
+
+  - name: Set register_node
+    ansible.builtin.set_fact:
+      register_node: true
+    ignore_unreachable: true
+    when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
+    #when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+
+  # Print the register_node
+  - name: Print The register_node
+    ansible.builtin.debug:
+      var: register_node
+    ignore_unreachable: true
+    #when: debug
+
+
 
   # Print the hostname
   - name: Print The hostname when ansible-master
@@ -69,32 +112,5 @@
       body: "{{ serverstatus }}"
       status_code: 201
     when: sendRequest
-
-  - name: Set register_master
-    ansible.builtin.set_fact:
-      register_master: true
-    ignore_unreachable: true
-    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
-
-  # Print the register_master
-  - name: Print The register_master
-    ansible.builtin.debug:
-      var: register_master
-    ignore_unreachable: true
-    #when: debug
-
-  - name: Set register_node
-    ansible.builtin.set_fact:
-      register_node: true
-    ignore_unreachable: true
-    when: inventory_hostname | select('ubuntu-node') | list | count > 0
-    #when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
-
-  # Print the register_node
-  - name: Print The register_node
-    ansible.builtin.debug:
-      var: register_node
-    ignore_unreachable: true
-    #when: debug
 
       
