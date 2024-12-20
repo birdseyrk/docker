@@ -77,6 +77,32 @@
       var: inventory_hostname
     when: inventory_hostname == "ansible-master"
 
+  - name: host IP
+    ignore_unreachable: true
+    shell: hostname -i
+    register: hostip
+    ignore_errors: yes
+    when: debug
+
+  - name: Set host line
+    ansible.builtin.set_fact:
+      myIP: "{{hostip.stdout.split(' ').1}}"
+    when: (hostip.stdout is defined )
+
+  - name: print hostip
+    ansible.builtin.debug:
+      var: myIP
+    when: debug
+
+  - name: Set host line
+    ansible.builtin.set_fact:
+      myLine: "{{myIP + ' ' + inventory_hostname}}"
+
+  - name: print myLine
+    ansible.builtin.debug:
+      var: myLine
+    when: debug
+
   # Cut the Uptime from the results
   - name: Check uptime
     shell: cut -d ' ' -f1 /proc/uptime
