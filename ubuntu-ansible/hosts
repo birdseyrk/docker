@@ -4,7 +4,7 @@ fe00::0 ip6-localnet
 ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
-172.17.0.20     ansible-master
+172.20.0.20     ansible-master
 
 192.168.1.100 creede
 192.168.1.101 ubuntu1
@@ -13,14 +13,14 @@ ff02::2 ip6-allrouters
 192.168.1.104 creede02
 192.168.1.105 creede03
 
-172.17.0.21 ubuntu-node01
-172.17.0.22 ubuntu-node02
-172.17.0.23 ubuntu-node03
-172.17.0.24 ubuntu-node04
-172.17.0.25 ubuntu-node05
-172.17.0.26 ubuntu-node06
-172.17.0.27 ubuntu-node07
-172.17.0.28 ubuntu-node08
-172.17.0.29 ubuntu-node09
-172.17.0.30 ubuntu-node10
-172.17.0.20 ansible-master
+172.20.0.21 ubuntu-node01
+172.20.0.22 ubuntu-node02
+172.20.0.23 ubuntu-node03
+172.20.0.24 ubuntu-node04
+172.20.0.25 ubuntu-node05
+172.20.0.26 ubuntu-node06
+172.20.0.27 ubuntu-node07
+172.20.0.28 ubuntu-node08
+172.20.0.29 ubuntu-node09
+172.20.0.30 ubuntu-node10
+172.20.0.20 ansible-master

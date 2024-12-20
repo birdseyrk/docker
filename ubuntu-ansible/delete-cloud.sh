@@ -26,6 +26,8 @@ docker rm ubuntu-node09
 docker rm ubuntu-node10
 docker ps -a
 
+docker network rm ansiblenet
+
 docker image rm ubuntu-node
 docker image rm ansible-master
 
