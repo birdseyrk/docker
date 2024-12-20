@@ -191,7 +191,8 @@ ansible-master
  docker run -dt -h ansible-master --restart=always --name ansible-master ansible-master
  docker logs --tail 50 --follow --timestamps  ansible-master
 
-  docker exec -it ansible-master  //bin//bash
+docker exec -it ansible-master  //bin//bash
+docker exec -it ubuntu-node01  //bin//bash
 
   docker exec -t ansible-master /bin/bash -c "/setup/setup-master.sh"
 2.2.  service ssh restart

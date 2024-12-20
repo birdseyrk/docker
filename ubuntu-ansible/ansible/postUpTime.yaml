@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  gather_facts: false
+  gather_facts: true
 
   # Register the Ansible Variables
   vars:
@@ -16,46 +16,58 @@
 
   tasks:
   
+  # - name: whoami 
+  #   shell: whoami 
+  #   register: whoami
+  #   ignore_unreachable: true 
 
-  - name: Set register_master
-    ansible.builtin.set_fact:
-      register_master: true
-    ignore_unreachable: true
-    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+  # # Print whoami
+  # - name: Print whoami
+  #   ansible.builtin.debug:
+  #     var: whoami.stdout
+  #   ignore_unreachable: true
+  #   #when: debug
+  
 
-  - name: Set Master 
-    shell: /setup/setup-master.sh
-    register: set_master
-    ignore_unreachable: true
-    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+  # - name: Set register_master
+  #   ansible.builtin.set_fact:
+  #     register_master: true
+  #   ignore_unreachable: true
+  #   when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
 
-  - name: Set Node 
-    shell: /setup/setup-node.sh
-    register: set_node
-    ignore_unreachable: true
-    when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
+  # - name: Set Master 
+  #   shell: /setup/setup-master.sh
+  #   register: set_master
+  #   ignore_unreachable: true
+  #   when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+
+  # - name: Set Node 
+  #   shell: /setup/setup-node.sh
+  #   register: set_node
+  #   ignore_unreachable: true
+  #   when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
 
 
-  # Print the register_master
-  - name: Print The register_master
-    ansible.builtin.debug:
-      var: register_master
-    ignore_unreachable: true
-    #when: debug
+  # # Print the register_master
+  # - name: Print The register_master
+  #   ansible.builtin.debug:
+  #     var: register_master
+  #   ignore_unreachable: true
+  #   #when: debug
 
-  - name: Set register_node
-    ansible.builtin.set_fact:
-      register_node: true
-    ignore_unreachable: true
-    when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
-    #when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+  # - name: Set register_node
+  #   ansible.builtin.set_fact:
+  #     register_node: true
+  #   ignore_unreachable: true
+  #   when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
+  #   #when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
 
-  # Print the register_node
-  - name: Print The register_node
-    ansible.builtin.debug:
-      var: register_node
-    ignore_unreachable: true
-    #when: debug
+  # # Print the register_node
+  # - name: Print The register_node
+  #   ansible.builtin.debug:
+  #     var: register_node
+  #   ignore_unreachable: true
+  #   #when: debug
 
 
 
@@ -70,10 +82,10 @@
     shell: cut -d ' ' -f1 /proc/uptime
     register: uptimeoutput
 
-  - name: Test 
-    ansible.builtin.debug:
-      var: uptimeoutput.stdout_lines[0]
-    when: uptimeoutput.stdout_lines[0] == "VARIABLE IS NOT DEFINED!" and  inventory_hostname == "ansible-master"
+  # - name: Test 
+  #   ansible.builtin.debug:
+  #     var: uptimeoutput.stdout_lines[0]
+  #   when: uptimeoutput.stdout_lines[0] == "VARIABLE IS NOT DEFINED!" and  inventory_hostname == "ansible-master"
 
   # Print the uptime
   - name: Print The uptime
