@@ -5,7 +5,7 @@
 
   # Register the Ansible Variables
   vars:
-    debug: false
+    debug: true
     sendRequest: true
     lastUpdate: "{{ansible_date_time.date}}:{{ansible_date_time.time}}"
     epoch: "{{ansible_date_time.epoch}}"
@@ -15,90 +15,79 @@
   # defines the Ansible tasks
 
   tasks:
-  
-  # - name: whoami 
-  #   shell: whoami 
-  #   register: whoami
-  #   ignore_unreachable: true 
 
-  # # Print whoami
-  # - name: Print whoami
-  #   ansible.builtin.debug:
-  #     var: whoami.stdout
-  #   ignore_unreachable: true
-  #   #when: debug
-  
-
-  # - name: Set register_master
-  #   ansible.builtin.set_fact:
-  #     register_master: true
-  #   ignore_unreachable: true
-  #   when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
-
-  # - name: Set Master 
-  #   shell: /setup/setup-master.sh
-  #   register: set_master
-  #   ignore_unreachable: true
-  #   when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
-
-  # - name: Set Node 
-  #   shell: /setup/setup-node.sh
-  #   register: set_node
-  #   ignore_unreachable: true
-  #   when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
-
-
-  # # Print the register_master
-  # - name: Print The register_master
-  #   ansible.builtin.debug:
-  #     var: register_master
-  #   ignore_unreachable: true
-  #   #when: debug
-
-  # - name: Set register_node
-  #   ansible.builtin.set_fact:
-  #     register_node: true
-  #   ignore_unreachable: true
-  #   when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
-  #   #when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
-
-  # # Print the register_node
-  # - name: Print The register_node
-  #   ansible.builtin.debug:
-  #     var: register_node
-  #   ignore_unreachable: true
-  #   #when: debug
-
-
-
-  # Print the hostname
-  - name: Print The hostname when ansible-master
+  - name: Print The hostname
+    ignore_unreachable: true
     ansible.builtin.debug:
       var: inventory_hostname
-    when: inventory_hostname == "ansible-master"
+    when: debug
 
   - name: host IP
     ignore_unreachable: true
     shell: hostname -i
     register: hostip
     ignore_errors: yes
-    when: debug
-
-  - name: Set host line
-    ansible.builtin.set_fact:
-      myIP: "{{hostip.stdout.split(' ').1}}"
-    when: (hostip.stdout is defined )
 
   - name: print hostip
+    ignore_unreachable: true
     ansible.builtin.debug:
-      var: myIP
+      var: hostip.stdout
     when: debug
 
+  - name: Set double ips
+    ignore_unreachable: true
+    ansible.builtin.set_fact:
+      myDoubleIPs: "{{( (hostip.stdout is defined ) and ( ((hostip.stdout |length)-1)  > 14) | bool )}}"
+
+  - name: Set single ips
+    ignore_unreachable: true
+    ansible.builtin.set_fact:
+      mySingleIPs: "{{( (hostip.stdout is defined ) and ( ((hostip.stdout |length)-1)  < 14) | bool )}}"
+
+  - name: print singles
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: mySingleIPs
+    when: debug
+
+  - name: print doubles
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myDoubleIPs
+    when: debug
+
+  # always add the ip, then over ride if it is a double.
+  - name: Set myIP
+    ignore_unreachable: true
+    ansible.builtin.set_fact:
+      myIP: "{{hostip.stdout}}"
+
+  - name: print myIP - single IPs
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myIP
+    when: mySingleIPs and debug
+
+  #override myIP if the ip was doubled, get the second ip
+  - name: Set myIP - Double IPs
+    ignore_unreachable: true
+    ansible.builtin.set_fact:
+      myIP: "{{hostip.stdout.split(' ').1}}"
+    when: myDoubleIPs
+
+  - name: print myIP - double Ips
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myIP
+    when: myDoubleIPs and debug
+
   - name: Set host line
+    ignore_unreachable: true
     ansible.builtin.set_fact:
       myLine: "{{myIP + ' ' + inventory_hostname}}"
 
   - name: print myLine
+    ignore_unreachable: true
     ansible.builtin.debug:
       var: myLine
     when: debug
@@ -108,16 +97,43 @@
     shell: cut -d ' ' -f1 /proc/uptime
     register: uptimeoutput
 
-  # - name: Test 
-  #   ansible.builtin.debug:
-  #     var: uptimeoutput.stdout_lines[0]
-  #   when: uptimeoutput.stdout_lines[0] == "VARIABLE IS NOT DEFINED!" and  inventory_hostname == "ansible-master"
-
   # Print the uptime
   - name: Print The uptime
     ansible.builtin.debug:
       var: uptimeoutput.stdout_lines[0]
     when: debug
+
+  - name: Set register_master
+    ansible.builtin.set_fact:
+      register_master: true
+    ignore_unreachable: true
+    when: (inventory_hostname == "ansible-master") and (uptimeoutput.stdout is undefined )
+
+  # Print the hostname
+  - name: Print register_master
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: register_master
+    when: debug
+
+  - name: Set register_node
+    ansible.builtin.set_fact:
+      register_node: true
+    ignore_unreachable: true
+    when: (inventory_hostname.split('-').0 =="ubuntu") and (uptimeoutput.stdout is undefined )
+
+  # Print the hostname
+  - name: Print register_node
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: register_node
+    when: debug
+
+  # add the host
+  - name: Add the host to ect hosts
+    shell: /setup/add-host-hostfile.sh {{'myLine'}}
+    register: addhost 
+    when: register_master or register_node
 
   # Print the current date
   - name: Print the current date

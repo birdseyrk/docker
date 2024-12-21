@@ -1,0 +1,25 @@
+- hosts: all
+  gather_facts: false
+
+  # Register the Ansible Variables
+  vars:
+    debug: true
+
+  # defines the Ansible tasks
+
+  tasks:
+
+  - name: Print myLine
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myLine
+    when: debug
+
+  - name: add host
+    become: true
+    become_user: root
+    vars:
+      ansible_become_pass: ansadmin
+    lineinfile:
+      dest: /ect/hosts
+      line: "{{myLine}}"

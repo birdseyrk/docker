@@ -16,6 +16,8 @@ docker run -dt -h ubuntu-node08 --net ansiblenet --ip 172.20.0.28 --restart=unle
 docker run -dt -h ubuntu-node09 --net ansiblenet --ip 172.20.0.29 --restart=unless-stopped --name ubuntu-node09 ubuntu-node
 docker run -dt -h ubuntu-node10 --net ansiblenet --ip 172.20.0.30 --restart=unless-stopped --name ubuntu-node10 ubuntu-node
 
+sleep 10;
+
 docker exec -t ubuntu-node01 /bin/bash -c "/setup/setup-node.sh"
 docker exec -t ubuntu-node02 /bin/bash -c "/setup/setup-node.sh"
 docker exec -t ubuntu-node03 /bin/bash -c "/setup/setup-node.sh"

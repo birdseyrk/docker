@@ -41,6 +41,9 @@ ansible-node Repeat for node01 - node10
     docker ps -a
     docker network inspect bridge
 3.  docker network inspect bridge
+
+    docker network inspect ansiblenets
+
 4. report for all the nodes, replacing 01 with a one up number
     #docker exec -it ubuntu-node01  //bin//bash 
     docker exec -it ubuntu-node01  service ssh restart
