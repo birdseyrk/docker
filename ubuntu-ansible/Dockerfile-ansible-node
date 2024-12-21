@@ -61,6 +61,8 @@ RUN chmod 0644 /etc/cron.d/crontab
 RUN chmod 777 /var/log
 RUN touch /var/log/cron.log
 RUN chmod 777 /var/log/cron.log
+RUN touch /var/log/ops.log
+RUN chmod 777 /var/log/ops.log
 
 #does not work as is  RUN service ssh restart
 

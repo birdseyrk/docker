@@ -1,4 +1,9 @@
 #!/bin/bash
+
+#run as ansible on ubuntu2
+
+rm -r /home/ansadmin/.ssh
+
 ssh-keygen -q -t rsa -N '' <<< $'\ny' >/dev/null 2>&1
 
 ssh-keyscan creede   >> ~/.ssh/known_hosts

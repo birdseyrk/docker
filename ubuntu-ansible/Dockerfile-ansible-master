@@ -67,6 +67,8 @@ RUN chmod 600 /var/spool/cron/crontabs/ansadmin
 RUN chmod 777 /var/log
 RUN touch /var/log/cron.log
 RUN chmod 777 /var/log/cron.log
+RUN touch /var/log/ops.log
+RUN chmod 777 /var/log/ops.log
 
 #RUN service ssh restart  # did not work
 #RUN systemctl restart ssh
