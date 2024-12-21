@@ -40,6 +40,10 @@ RUN chmod 777 /setup
 COPY ./password.txt /setup/password.txt
 COPY ./setup-node.sh /setup/setup-node.sh
 RUN chmod 777 /setup/setup-node.sh
+COPY ./setup-master.sh /setup/setup-master.sh
+RUN chmod 777 /setup/setup-master.sh
+COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
+RUN chmod 777 /setup/add-host-hostfile.sh
 
 WORKDIR /ops
 
