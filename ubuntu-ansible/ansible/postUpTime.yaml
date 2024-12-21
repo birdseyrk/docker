@@ -34,15 +34,21 @@
       var: hostip.stdout
     when: "'UNREACHABLE' in hostip.stdout"
 
+  # - name: restart the ssh service
+  #   ignore_unreachable: true
+  #   become: true
+  #   become_user: root
+  #   vars:
+  #     ansible_become_pass: ansadmin
+  #   shell: service ssh restartvi 
+  #   register: restart
+  #   when: "'UNREACHABLE' in hostip.stdout" 
+
   - name: restart the ssh service
     ignore_unreachable: true
-    become: true
-    become_user: root
-    vars:
-      ansible_become_pass: ansadmin
-    shell: service ssh restart
-    register: restart
-    when: "'UNREACHABLE' in hostip.stdout" 
+    shell: /setup/restart-ssh-service.sh '{{inventory_hostname}}'
+    register: hostip
+    ignore_errors: yes 
     
   - name: print restart
     ignore_unreachable: true

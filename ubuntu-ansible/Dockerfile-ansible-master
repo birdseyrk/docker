@@ -43,6 +43,8 @@ COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
 RUN chmod 777 /setup/add-host-hostfile.sh
 COPY ./setup-ansadmin.sh /setup/setup-ansadmin.sh
 RUN chmod 777 /setup/setup-ansadmin.sh
+COPY ./restart-ssh-service.sh /setup/restart-ssh-service.sh
+RUN chmod 777 /setup/restart-ssh-service.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible
