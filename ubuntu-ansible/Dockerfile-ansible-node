@@ -46,6 +46,9 @@ COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
 RUN chmod 777 /setup/add-host-hostfile.sh
 
 WORKDIR /ops
+COPY ./ansible /ops/ansible
+RUN chmod 777 /ops/ansible
+RUN chmod 777 /ops/ansible/*.*
 
 RUN groupadd -g 1001 ansadmin && \
     useradd -m -u 1001 -g ansadmin ansadmin -p ansadmin
