@@ -41,12 +41,14 @@ RUN chmod 777 /setup
 COPY ./password.txt /setup/password.txt
 COPY ./setup-node.sh /setup/setup-node.sh
 RUN chmod 777 /setup/setup-node.sh
-COPY ./setup-master.sh /setup/setup-master.sh
-RUN chmod 777 /setup/setup-master.sh
+COPY ./setup-master-hostfile.sh /setup/setup-master-hostfile.sh
+RUN chmod 777 /setup/setup-master-hostfile.sh
 COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
 RUN chmod 777 /setup/add-host-hostfile.sh
 COPY ./restart-ssh-service.sh /setup/restart-ssh-service.sh
 RUN chmod 777 /setup/restart-ssh-service.sh
+COPY ./setup-nodes.sh /setup/setup-nodes.sh
+RUN chmod 777 /setup/setup-nodes.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible
