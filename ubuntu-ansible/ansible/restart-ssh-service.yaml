@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  gather_facts: false
+
+  # Register the Ansible Variables
+  vars:
+    debug: true
+  # defines the Ansible tasks
+
+  tasks:
+
+
+  - name: Print myHost
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myHost
+    when: debug
+
+  - name: restart ssh service
+    ignore_unreachable: true
+    shell: docker exec -t {{myHost}} /bin/bash -c  "service ssh restart"
+    register: restart
+    ignore_errors: yes

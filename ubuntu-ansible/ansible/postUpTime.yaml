@@ -153,7 +153,7 @@
 
   # add the host
   - name: Add the host to ect hosts
-    shell: /setup/add-host-hostfile.sh {{'myLine'}}
+    shell: /setup/add-host-hostfile.sh '{{myLine}}'
     register: addhost 
     when: register_master or register_node
 

@@ -2,14 +2,8 @@
 
 #run as ansible on ubuntu2
 
-docker exec -t ubuntu-node01 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node02 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node03 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node04 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node05 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node06 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node07 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node08 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node09 /bin/bash -c  "service ssh restart"
-docker exec -t ubuntu-node10 /bin/bash -c  "service ssh restart"
-docker exec -t ansible-master /bin/bash -c "service ssh restart"
+echo "restart-ssh-service.sh [ $1 ]" >> /var/log/ops.log
+
+#docker exec -t $1 /bin/bash -c  "service ssh restart"
+
+/usr/bin/ansible-playbook -i /home/ansadmin/local/docker-ubuntu/docker/ubuntu-ansible/restart-inventory.txt /home/ansadmin/local/docker-ubuntu/docker/ubuntu-ansible/restart-ssh-service.yaml --extra-vars "myHost='$1'"
