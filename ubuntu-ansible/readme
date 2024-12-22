@@ -1,3 +1,11 @@
+
+docker exec -it ansible-master  //bin//bash
+docker exec -it ubuntu-node01  //bin//bash
+docker network ls 
+docker network inspect ansiblenet
+
+
+
 ubuntu2
 su - ansadmin
 cd /local/docker-ubuntu/docker/ubuntu-ansible
