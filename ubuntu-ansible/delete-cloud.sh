@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#run on ubuntu2
+
 docker stop ansible-master
 docker stop ubuntu-node01
 docker stop ubuntu-node02
@@ -31,5 +33,5 @@ docker network rm ansiblenet
 docker image rm ubuntu-node
 docker image rm ansible-master
 
-docker ps -a
-docker images
+# docker ps -a
+# docker images

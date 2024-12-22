@@ -47,6 +47,8 @@ COPY ./restart-ssh-service.sh /setup/restart-ssh-service.sh
 RUN chmod 777 /setup/restart-ssh-service.sh
 COPY ./setup-nodes.sh /setup/setup-nodes.sh
 RUN chmod 777 /setup/setup-nodes.sh
+COPY ./run-status.sh /setup/run-status.sh
+RUN chmod 777 /setup/run-status.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible

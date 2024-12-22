@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#run on ubuntu2
+
 docker exec -t ubuntu-node01 /bin/bash -c "service ssh restart"
 docker exec -t ubuntu-node02 /bin/bash -c "service ssh restart"
 docker exec -t ubuntu-node03 /bin/bash -c "service ssh restart"

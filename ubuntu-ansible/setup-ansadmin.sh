@@ -47,5 +47,5 @@ sshpass -f /setup/password.txt ssh-copy-id ansadmin@ubuntu-node09
 sshpass -f /setup/password.txt ssh-copy-id ansadmin@ubuntu-node10
 sshpass -f /setup/password.txt ssh-copy-id ansadmin@ansible-master
 
-/ops/ansible/systemstatus.sh > /var/log/systemstatus.log
-/ops/ansible/uptime.sh > /var/log/uptime.log
+# /ops/ansible/systemstatus.sh > /var/log/systemstatus.log
+# /ops/ansible/uptime.sh > /var/log/uptime.log
