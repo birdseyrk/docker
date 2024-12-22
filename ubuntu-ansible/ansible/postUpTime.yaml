@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  gather_facts: false
+  gather_facts: true
 
   # Register the Ansible Variables
   vars:
@@ -21,6 +21,19 @@
     ansible.builtin.debug:
       var: inventory_hostname
     when: debug
+
+  - name: ping host
+    ignore_unreachable: true
+    shell: ping ansible-master
+    register: myPing
+    ignore_errors: yes
+    when: "'ubuntu2' in inventory_hostname"
+
+  - name: print myPing 
+    ignore_unreachable: true
+    ansible.builtin.debug:
+      var: myPing
+    when: "'ubuntu2' in inventory_hostname"
 
   - name: host IP
     ignore_unreachable: true

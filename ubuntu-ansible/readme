@@ -4,6 +4,17 @@ docker exec -it ubuntu-node01  //bin//bash
 docker network ls 
 docker network inspect ansiblenet
 
+after a reboot of ubuntu2
+- the network is running
+- on ansible-master
+    - the crontab is running
+    - the host file needs to be replaced
+
+- need to run 
+    - setup-cloud-nodes
+    - setuppcloud-master
+
+
 
 
 ubuntu2
