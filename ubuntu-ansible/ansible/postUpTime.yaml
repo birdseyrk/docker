@@ -44,17 +44,17 @@
   #   register: restart
   #   when: "'UNREACHABLE' in hostip.stdout" 
 
-  - name: restart the ssh service
-    ignore_unreachable: true
-    shell: /setup/restart-ssh-service.sh '{{inventory_hostname}}'
-    register: hostip
-    ignore_errors: yes 
+  # - name: restart the ssh service
+  #   ignore_unreachable: true
+  #   shell: /setup/restart-ssh-service.sh '{{inventory_hostname}}'
+  #   register: hostip
+  #   ignore_errors: yes 
     
-  - name: print restart
-    ignore_unreachable: true
-    ansible.builtin.debug:
-      var: restart
-    when: "'UNREACHABLE' in hostip.stdout" 
+  # - name: print restart
+  #   ignore_unreachable: true
+  #   ansible.builtin.debug:
+  #     var: restart
+  #   when: "'UNREACHABLE' in hostip.stdout" 
 
   - name: print hostip
     ignore_unreachable: true
@@ -158,10 +158,10 @@
     when: debug
 
   # add the host
-  - name: Add the host to ect hosts
-    shell: /setup/add-host-hostfile.sh '{{myLine}}'
-    register: addhost 
-    when: register_master or register_node
+  # - name: Add the host to ect hosts
+  #   shell: /setup/add-host-hostfile.sh '{{myLine}}'
+  #   register: addhost 
+  #   when: register_master or register_node
 
   # Print the current date
   - name: Print the current date
