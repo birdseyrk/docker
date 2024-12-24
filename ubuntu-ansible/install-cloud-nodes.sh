@@ -2,13 +2,6 @@
 
 #run on ubuntu2
 
-# replaced docker build --no-cache --add-host ansible-master:172.20.0.20 -t ansible-master . -f Dockerfile-ansible-master
-# moved docker build --no-cache -t ansible-master . -f Dockerfile-ansible-master
-
-# moved docker build --no-cache -t ubuntu-node . -f Dockerfile-ansible-node
-
-# moved docker network create --subnet=172.20.0.0/16 ansiblenet
-
 docker run -dt -h ubuntu-node01 --net ansiblenet --ip 172.20.0.21 --restart=unless-stopped --name ubuntu-node01 ubuntu-node
 docker run -dt -h ubuntu-node02 --net ansiblenet --ip 172.20.0.22 --restart=unless-stopped --name ubuntu-node02 ubuntu-node
 docker run -dt -h ubuntu-node03 --net ansiblenet --ip 172.20.0.23 --restart=unless-stopped --name ubuntu-node03 ubuntu-node
@@ -19,19 +12,3 @@ docker run -dt -h ubuntu-node07 --net ansiblenet --ip 172.20.0.27 --restart=unle
 docker run -dt -h ubuntu-node08 --net ansiblenet --ip 172.20.0.28 --restart=unless-stopped --name ubuntu-node08 ubuntu-node
 docker run -dt -h ubuntu-node09 --net ansiblenet --ip 172.20.0.29 --restart=unless-stopped --name ubuntu-node09 ubuntu-node
 docker run -dt -h ubuntu-node10 --net ansiblenet --ip 172.20.0.30 --restart=unless-stopped --name ubuntu-node10 ubuntu-node
-
-#moved 
-# docker exec -t ubuntu-node01 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node02 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node03 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node04 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node05 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node06 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node07 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node08 /bin/bash -c "service ssh restart"
-# docker exec -t ubuntu-node09 /bin/bash -c "service ssh restart"
-# # docker exec -t ubuntu-node10 /bin/bash -c "service ssh restart"
-#moved 
-# docker run -dt -h ansible-master --net ansiblenet --ip 172.20.0.20 --restart=unless-stopped --name ansible-master ansible-master
-# docker exec -t ansible-master /bin/bash -c "/setup/setup-master.sh"
-# docker exec -t -u ansadmin ansible-master /bin/bash -c "/setup/setup-ansadmin.sh"

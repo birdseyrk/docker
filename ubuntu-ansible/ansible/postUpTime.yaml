@@ -11,6 +11,7 @@
     epoch: "{{ansible_date_time.epoch}}"
     register_master: false;
     register_node: false;
+    master_dead: false;
 
   # defines the Ansible tasks
 
@@ -34,6 +35,18 @@
     ansible.builtin.debug:
       var: myPing
     when: "'ubuntu2' in inventory_hostname"
+
+  # - name: Set single ips
+  #   ignore_unreachable: true
+  #   ansible.builtin.set_fact:
+  #     master_dead: "{{( (hostip.stdout is defined ) }}"
+  #   when: "'ubuntu2' in inventory_hostname"
+
+  # - name: print singles
+  #   ignore_unreachable: true
+  #   ansible.builtin.debug:
+  #     var: mySingleIPs
+  #   when: "'ubuntu2' in inventory_hostname"
 
   - name: host IP
     ignore_unreachable: true

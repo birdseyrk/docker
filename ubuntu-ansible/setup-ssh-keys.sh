@@ -3,7 +3,6 @@
 
 #run as ansible on ansible-master
 
-
 rm -r /home/ansadmin/.ssh/known_hosts
 
 ssh-keyscan creede   >> ~/.ssh/known_hosts
