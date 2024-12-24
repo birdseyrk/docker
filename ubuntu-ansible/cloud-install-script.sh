@@ -20,3 +20,6 @@ sleep 5;
 /home/ansadmin/local/docker-ubuntu/docker/ubuntu-ansible/setup-cloud-master.sh
 sleep 2;
 /home/ansadmin/local/docker-ubuntu/docker/ubuntu-ansible/get-status.sh
+
+exit 0
+

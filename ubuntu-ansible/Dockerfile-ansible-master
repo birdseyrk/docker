@@ -39,10 +39,10 @@ COPY ./hosts /setup/hosts
 COPY ./password.txt /setup/password.txt
 COPY ./setup-master.sh /setup/setup-master-hostfile.sh
 RUN chmod 777 /setup/setup-master-hostfile.sh
-# COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
-# RUN chmod 777 /setup/add-host-hostfile.sh
-COPY ./setup-ansadmin.sh /setup/setup-ansadmin.sh
-RUN chmod 777 /setup/setup-ansadmin.sh
+COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
+RUN chmod 777 /setup/add-host-hostfile.sh
+# COPY ./setup-ansadmin.sh /setup/setup-ansadmin.sh
+# RUN chmod 777 /setup/setup-ansadmin.sh
 # COPY ./restart-ssh-service.sh /setup/restart-ssh-service.sh
 # RUN chmod 777 /setup/restart-ssh-service.sh
 # COPY ./setup-cloud-nodes.sh /setup/setup-cloud-nodes.sh
