@@ -49,8 +49,10 @@ COPY ./setup-cloud-nodes.sh /setup/setup-cloud-nodes.sh
 RUN chmod 777 /setup/setup-cloud-nodes.sh
 COPY ./run-status.sh /setup/run-status.sh
 RUN chmod 777 /setup/run-status.sh
-COPY ./docker-node-entrypoint.sh /setup/docker-master-entrypoint.sh
+COPY ./docker-master-entrypoint.sh /setup/docker-master-entrypoint.sh
 RUN chmod +x /setup/docker-master-entrypoint.sh
+COPY ./setup-ssh-keys.sh /setup/setup-ssh-keys.sh
+RUN chmod +x /setup/setup-ssh-keys.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible
@@ -78,12 +80,16 @@ RUN chmod 777 /var/log/cron.log
 RUN touch /var/log/ops.log
 RUN chmod 777 /var/log/ops.log
 
+#RUN /setup/docker-master-entrypoint.sh
+
 #RUN service ssh restart  # did not work
 #RUN systemctl restart ssh
 
 #USER ansadmin
 
+#ENTRYPOINT ["/setup/setup-ansadmin.sh"]
+
 ENTRYPOINT ["/setup/docker-master-entrypoint.sh"]
 
-#USER root
+USER root
 CMD ["cron", "-f", "tail -f /var/log/cron.log"]
