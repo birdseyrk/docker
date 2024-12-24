@@ -24,7 +24,7 @@
 
   - name: ping host
     ignore_unreachable: true
-    shell: ping ansible-master
+    shell: ping -c 1 ansible-master
     register: myPing
     ignore_errors: yes
     when: "'ubuntu2' in inventory_hostname"

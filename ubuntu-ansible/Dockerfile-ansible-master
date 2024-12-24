@@ -81,5 +81,7 @@ RUN chmod 777 /var/log/ops.log
 
 #USER ansadmin
 
+ENTRYPOINT ["/setup/docker-master-entrypoint.sh"]
+
 #USER root
 CMD ["cron", "-f", "tail -f /var/log/cron.log"]

@@ -40,15 +40,17 @@ RUN chmod 777 /setup
 
 COPY ./password.txt /setup/password.txt
 COPY ./setup-node.sh /setup/setup-node.sh
-RUN chmod 777 /setup/setup-node.sh
+RUN chmod +x /setup/setup-node.sh
 COPY ./setup-master-hostfile.sh /setup/setup-master-hostfile.sh
-RUN chmod 777 /setup/setup-master-hostfile.sh
+RUN chmod +x /setup/setup-master-hostfile.sh
 COPY ./add-host-hostfile.sh /setup/add-host-hostfile.sh
-RUN chmod 777 /setup/add-host-hostfile.sh
+RUN chmod +x /setup/add-host-hostfile.sh
 COPY ./restart-ssh-service.sh /setup/restart-ssh-service.sh
-RUN chmod 777 /setup/restart-ssh-service.sh
+RUN chmod +x /setup/restart-ssh-service.sh
 COPY ./setup-nodes.sh /setup/setup-nodes.sh
-RUN chmod 777 /setup/setup-nodes.sh
+RUN chmod +x /setup/setup-nodes.sh
+COPY ./docker-node-entrypoint.sh /setup/docker-node-entrypoint.sh
+RUN chmod +x /setup/docker-node-entrypoint.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible
@@ -72,6 +74,8 @@ RUN chmod 777 /var/log/ops.log
 
 #USER ansadmin
 #USER root
+
+ENTRYPOINT ["/setup/docker-node-entrypoint.sh"]
 
 CMD ["cron", "-f", "tail -f /var/log/cron.log"]
 
