@@ -49,6 +49,8 @@ COPY ./setup-cloud-nodes.sh /setup/setup-cloud-nodes.sh
 RUN chmod 777 /setup/setup-cloud-nodes.sh
 COPY ./run-status.sh /setup/run-status.sh
 RUN chmod 777 /setup/run-status.sh
+COPY ./docker-node-entrypoint.sh /setup/docker-master-entrypoint.sh
+RUN chmod +x /setup/docker-master-entrypoint.sh
 
 WORKDIR /ops
 COPY ./ansible /ops/ansible
